@@ -1,0 +1,46 @@
+# Python Runtimes & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+
+# Environment Variables & Secrets (CRITICAL: Section 6 Security & CI Secret Scanning)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+client_secret*.json
+token.json
+credentials.json
+
+# SQLite Database & Write-Ahead Logs
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Obsidian Internal Workspace State
+# (Keeps notes and PARA structure intact, ignores local window/UI states)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+
+# Test Caches & Reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Operating System & Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
