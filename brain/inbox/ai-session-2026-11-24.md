@@ -18,7 +18,7 @@ Understand the YouTube Video Intelligence MCP Server problem statement, the role
 
 ## What Failed / Challenges
 - Initial confusion around whether the Second Brain acted as runtime instructions for the MCP server rather than a team knowledge base.
-- Needed to ensure `[[wikilinks]]` only reference existing files so automated CI link validation does not fail on the initial PR.
+- Needed to ensure wikilinks only reference existing files so automated CI link validation does not fail on the initial PR.
 
 ## Next Steps
 - Ingest the 10 technical research notes into `brain/resources/` using `brain-ingest` and link them from [[index]].

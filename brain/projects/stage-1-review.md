@@ -10,7 +10,7 @@ type: project
 
 ## What Worked
 - Splitting setup responsibilities across the team (GitHub Actions CI skeleton vs. Obsidian PARA vault initialization).
-- Standardizing YAML frontmatter and `[[wikilink]]` rules upfront so all notes stay compatible with CI checks and Obsidian graph view.
+- Standardizing YAML frontmatter and wikilink rules upfront so all notes stay compatible with CI checks and Obsidian graph view.
 - Documenting the scoping session in [[ai-session-2026-11-24]] and tracking vault updates in [[log]].
 
 ## What Did Not Work

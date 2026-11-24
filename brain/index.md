@@ -8,7 +8,7 @@ type: index
 
 # Second Brain — YouTube Video Intelligence MCP Server
 
-Master table of contents and `[[wikilink]]` hub for team research, standards, and stage reviews.
+Master table of contents and wikilink hub for team research, standards, and stage reviews.
 
 ## PARA Structure
 - **Inbox (`brain/inbox/`)**: Unprocessed ingested notes and `ai-session` logs.
@@ -21,4 +21,4 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[log]]
 
 ## Active Notes (Add links here as PRs merge)
-<!-- Add [[note-filename]] links here as each teammate commits their notes -->
+<!-- Add note-filename links here as each teammate commits their notes -->
