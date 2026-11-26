@@ -1,0 +1,558 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[a4paper, margin=1.5cm]{geometry}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[table]{xcolor}
+\usepackage{hyperref}
+
+\definecolor{primaryblue}{HTML}{1E3A8A}
+\definecolor{secondaryblue}{HTML}{2563EB}
+\definecolor{neutralgray}{HTML}{F1F5F9}
+\definecolor{bordergray}{HTML}{CBD5E1}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    urlcolor=secondaryblue,
+    citecolor=primaryblue,
+    pdftitle={Software Requirements Specification - YouTube Video Intelligence MCP Server},
+    pdfauthor={Project Engineering Team}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\renewcommand{\arraystretch}{1.35}
+
+% ==========================================
+% GLOBAL TEXT OVERFLOW AND LINE-BREAKING FIX
+% ==========================================
+
+\usepackage{xurl}
+\usepackage{url}
+
+% Improve line-breaking throughout the document
+\setlength{\emergencystretch}{3em}
+
+% Enable proper line-breaking in paths and URLs
+\urlstyle{tt}
+
+% Reusable command for file paths and directory names
+\newcommand{\filepath}[1]{\path{#1}}
+
+\begin{document}
+
+% -------------------------------------------------------------------------
+% TITLE PAGE (IEEE / Karl E. Wiegers Template Format)
+% -------------------------------------------------------------------------
+\begin{titlepage}
+    \vspace*{2cm}
+    \begin{flushright}
+        {\Huge\bfseries\color{primaryblue} Software Requirements\\[0.3cm] Specification}\\[0.8cm]
+        {\Large for}\\[0.8cm]
+        {\LARGE\bfseries YouTube Video Intelligence MCP Server}\\[0.6cm]
+        {\large Version 1.0}\\[2.5cm]
+        {\large Prepared by}\\[0.2cm]
+        {\large\filepath{Abhinav, Pranay Sanjan, Raj Vardhan}}\\[0.6cm]
+        {\large November 9, 2026}
+    \end{flushright}
+    \vfill
+    \noindent\textcolor{bordergray}{\rule{\textwidth}{1pt}}\\[0.2cm]
+    {\footnotesize Adapted from the Karl E. Wiegers IEEE Std 830 / ISO/IEC/IEEE 29148 Software Requirements Specification Template.}
+\end{titlepage}
+
+% -------------------------------------------------------------------------
+% TABLE OF CONTENTS & REVISION HISTORY
+% -------------------------------------------------------------------------
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+
+\section*{Revision History}
+\addcontentsline{toc}{section}{Revision History}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}l l X l}
+\toprule
+\rowcolor{neutralgray}
+Name & Date & Reason For Changes & Version \\
+\midrule
+\filepath{Abhinav, Pranay, Raj} & 2026-11-09 & Initial Stage 1 baseline SRS incorporating Functional (FR), Non-Functional (NFR), Agent Skill (SK), and Testing/Quality (TQ) requirements. & 1.0 \\
+\bottomrule
+\end{tabularx}
+
+\newpage
+\pagenumbering{arabic}
+
+% =========================================================================
+% SECTION 1: INTRODUCTION
+% =========================================================================
+\section{Introduction}
+
+\subsection{Purpose}
+This Software Requirements Specification (SRS) defines the complete software, architectural, quality, and operational workflow requirements for the \textbf{YouTube Video Intelligence MCP Server} project (Release 1.0). It specifies the complete scope of the system, including:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item Five core Functional Requirements (\filepath{FR-1} through \filepath{FR-5}) exposed via the Model Context Protocol (MCP).
+    \item Non-Functional Requirements (\filepath{NFR}) governing quota management, SQLite ACID persistence, security, and architectural decoupling.
+    \item Five Agent Skill specifications (\filepath{SK-1} through \filepath{SK-5}) governing both the Obsidian Second Brain knowledge base and automated verification workflows.
+    \item Testing and Quality gates (\filepath{TQ-1} through \filepath{TQ-8}) required for Continuous Integration (CI).
+\end{itemize}
+This document covers the entire backend MCP server, local persistence layer, external provider abstraction, and repository automation scripts.
+
+\subsection{Document Conventions}
+The following typographical and structural conventions apply throughout this specification:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Mandatory Keywords}: The verbs \textbf{SHALL} and \textbf{MUST} indicate mandatory requirements that will be verified via automated test suites or live Stage 4 inspection. \textbf{SHOULD} indicates a strongly recommended engineering practice. \textbf{MAY} indicates an optional enhancement.
+    \item \textbf{Requirement Identifiers}: Every testable requirement carries a unique, persistent tag (\filepath{REQ-FR1-1}, \filepath{NFR-PERF-1}, \filepath{SK-1}, \filepath{TQ-1}) used across the project's Traceability Matrix (\filepath{SE-5}). Detailed requirements inherit the priority of their parent feature unless explicitly stated otherwise.
+    \item \textbf{Second Brain Citations}: References enclosed in double square brackets, denote direct citations to distilled research notes stored inside the repository's Obsidian Second Brain vault (\filepath{SB-1}, \filepath{SB-3}).
+    \item \textbf{Placeholder Notation}: Items marked \filepath{TBD} (To Be Determined) represent design-time calibration values tracked to closure in Appendix C.
+\end{itemize}
+
+\subsection{Project Scope}
+When learners, researchers, and engineers use YouTube to study technical topics, native recommendation feeds optimize for raw watch time and viral engagement rather than following the context. Assembling a focused study playlist manually requires opening multiple tabs, checking individual video runtimes, filtering out superficial content, and manually managing playlists.
+
+The \textbf{YouTube Video Intelligence MCP Server} is a self-contained backend project that bridges conversational AI clients (such as Claude, ChatGPT, or Gemini) with the official \textbf{YouTube Data API v3} through the open \textbf{Model Context Protocol (MCP)}. The system enables an AI assistant to act on behalf of an authenticated user to:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item Discover topically and structurally similar videos and channels using deterministic Term Frequency-Inverse Document Frequency (TF-IDF) and cosine similarity scoring over metadata (\filepath{FR-1}, \filepath{FR-2}).
+    \item Generate explainable recommendations from the user's liked videos, subscriptions, and playlists (\filepath{FR-3}, \filepath{FR-4}).
+    \item Automatically curate playlists satisfying strict natural-language constraints (topic, maximum total duration, maximum per-video duration, language) and create them in the user's YouTube account only after explicit human confirmation (\filepath{FR-5}).
+    \item Maintain a persistent, linked Second Brain knowledge base (\filepath{brain/}) and reusable Agent Skills (\filepath{.agents/skills/}) that capture all engineering research, architectural decisions, and verification workflows (\filepath{Section 1}, \filepath{Section 8}).
+\end{itemize}
+
+\subsection{References}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Course SDLC Specification}: \textit{The AI-Assisted Software Development Life Cycle (SDLC)}, Project Engineering Guidelines, 2026.
+    \item \textbf{Project Problem Statement}: \textit{Project 1: YouTube Video Intelligence MCP Server}, Course Specification Document, 2026.
+    \item \textbf{Model Context Protocol (MCP)}: Anthropic Open Specification, \url{https://modelcontextprotocol.io/introduction} — Distilled in \filepath{[[brain/resources/mcp-protocol-architecture.md]]}.
+    \item \textbf{YouTube Data API v3 Reference \& Quota System}: Google Developers Documentation, \url{https://developers.google.com/youtube/v3} — Distilled in \filepath{[[brain/resources/youtube-api-quota-system.md]]}.
+    \item \textbf{Google OAuth 2.0 for Installed/Web Applications}: Google Identity Platform — Distilled in \filepath{[[brain/resources/youtube-oauth2-flow.md]]}.
+    \item \textbf{Agent Skills Format Specification}: Open Agent Skills Standard, \url{https://agentskills.io} — Distilled in \filepath{[[brain/resources/agent-skills-format.md]]}.
+    \item \textbf{SQLite Write-Ahead Logging (WAL) \& ACID Transactions}: SQLite Official Documentation, \url{https://www.sqlite.org/wal.html} — Distilled in \filepath{[[brain/resources/sqlite-wal-mode.md]]}.
+    \item \textbf{IEEE Std 830-1998 / ISO/IEC/IEEE 29148}: \textit{IEEE Recommended Practice for Software Requirements Specifications}.
+\end{enumerate}
+
+% =========================================================================
+% SECTION 2: OVERALL DESCRIPTION
+% =========================================================================
+\section{Overall Description}
+
+\subsection{Project Perspective}
+The YouTube Video Intelligence MCP Server is a new, self-contained backend system developed within an AI-assisted software engineering workflow. It sits between an MCP-compliant host client (e.g., Claude Desktop, MCP Inspector CLI, or IDE Agent) and external data providers.
+
+To satisfy Software Engineering Requirement \filepath{SE-6} (\textit{Isolate external dependencies behind a provider interface}) and Testing Requirement \filepath{TQ-5} (\textit{CI tests shall run against recorded fixtures or mocks, not the live API}), the core domain layer never communicates with Google servers directly. Instead, all external data operations pass through an abstract \filepath{YouTubeProvider} interface.
+
+\begin{table}[htbp]
+\centering
+\caption{System Architectural Layers and Subsystem Interconnections}
+\begin{tabularx}{\textwidth}{>{\bfseries}l X l}
+\toprule
+\rowcolor{neutralgray}
+Architectural Layer & Subsystem Responsibility & Primary Interface \\
+\midrule
+1. Presentation / Protocol & Exposes MCP Tools, Resources, and Prompts over JSON-RPC 2.0, plus a read-only HTTP status endpoint for local verification. & MCP SDK / FastAPI \\
+2. Security \& Confirmation Gate & Validates input schemas, strips prompt-injection strings from untrusted metadata, and enforces two-phase confirmation tokens for write actions. & Internal Middleware \\
+3. Core Domain Services & Executes TF-IDF vectorization, cosine similarity ranking, engagement statistical aggregation, and knapsack duration curation. & Pure Python Service API \\
+4. Pre-Flight Quota \& Cache & Tracks daily API unit consumption in SQLite (WAL mode) and aborts requests that would exceed remaining budget prior to provider execution (\filepath{TQ-6}). & SQLite ACID Repository \\
+5. Provider Abstraction (\filepath{SE-6}) & Abstract \filepath{YouTubeProvider} contract implemented by \filepath{LiveYouTubeProvider} (production) and \filepath{FixtureMockProvider} (offline CI testing). & Abstract Base Class \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{System Functions}
+At a high level, the system provides six primary functional groups:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Metadata-Based Video Similarity (\filepath{FR-1})}: Computes ranked similarity between a seed video and candidate videos using TF-IDF cosine similarity over titles/descriptions, Jaccard overlap over tags, and category matching.
+    \item \textbf{Metadata-Based Channel Similarity (\filepath{FR-2})}: Evaluates channel-level similarity by aggregating channel descriptions, branding keywords, topic categories, and recent upload metadata.
+    \item \textbf{Personalized User Recommendations (\filepath{FR-3})}: Builds an explainable user interest profile vector from authorized liked videos, subscriptions, and playlists to rank unseen candidate videos.
+    \item \textbf{Longitudinal Engagement Analysis (\filepath{FR-4})}: Computes statistical distributions over the user's library (top channels/categories, activity trends over time, duration preferences, and period-over-period comparisons).
+    \item \textbf{Constraint-Driven Playlist Curation (\filepath{FR-5})}: Filters and selects videos matching user-specified topic, language, per-video duration, and total playlist duration bounds, executing playlist creation only after explicit human confirmation.
+    \item \textbf{Knowledge Base \& Operational Verification (\filepath{SK-1}--\filepath{SK-5})}: Automates Second Brain ingestion, PARA refinement, vault querying, local server health verification (\filepath{local-check}), and end-to-end video-to-playlist curation.
+\end{itemize}
+
+
+\subsection{Operating Environment}
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Host Operating Systems}: POSIX-compliant environments including Linux (Ubuntu 22.04+, Fedora 39+), macOS 13+, and Windows Subsystem for Linux (WSL2).
+    \item \textbf{Language Runtime}: Python 3.11 or higher, managed with deterministic dependency lockfiles.
+    \item \textbf{Local Database Engine}: SQLite 3.35+ configured with Write-Ahead Logging (\filepath{PRAGMA journal\_mode=WAL;}) and foreign key enforcement (\filepath{PRAGMA foreign\_keys=ON;}).
+    \item \textbf{MCP Host Clients}: Compatible with Claude Desktop, Claude Code CLI, MCP Inspector CLI, and any client implementing MCP JSON-RPC 2.0 over \filepath{stdio} or HTTP Server-Sent Events (SSE).
+    \item \textbf{Knowledge Management Editor}: Obsidian v1.5+ pointing to the repository's \filepath{brain/} directory (\filepath{Section 9}).
+\end{itemize}
+
+\subsection{Design and Implementation Constraints}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Official YouTube Data API v3 Exclusivity (\filepath{CON-1})}: The system SHALL use only the official YouTube Data API v3. Web scraping, browser automation, or unofficial third-party extraction libraries (such as \filepath{yt-dlp} or \filepath{pytube}) are strictly forbidden (\filepath{Section 5}).
+    \item \textbf{Public Video Caption Restriction (\filepath{CON-2})}: Because the official YouTube Data API v3 \filepath{captions.download} endpoint restricts caption downloading to videos owned by the authenticated uploader, video summarization and similarity scoring SHALL operate strictly over official API metadata resources (\filepath{snippet.title}, \filepath{snippet.description}, \filepath{snippet.tags}, \filepath{topicDetails}, and \filepath{contentDetails.duration}).
+    \item \textbf{Single-Project Daily Quota Ceiling (\filepath{CON-3})}: Google Cloud allocates a default budget of \textbf{10,000 quota units per day} per project (\filepath{search.list} = 100 units, \filepath{playlists.insert} = 50 units, \filepath{playlistItems.insert} = 50 units, \filepath{videos.list} = 1 unit, \filepath{channels.list} = 1 unit). The team SHALL NOT create multiple Google Cloud projects or rotate keys to bypass this limit (\filepath{Section 5}).
+    \item \textbf{In-House Similarity Computation (\filepath{CON-4})}: Because the YouTube Data API v3 does not expose user watch history or native related-video/related-channel endpoints, all similarity models SHALL be computed directly by the project using TF-IDF, cosine similarity, and weighted metadata scoring (\filepath{Implementation Note}).
+    \item \textbf{OAuth 2.0 Testing Mode 7-Day Token Expiry (\filepath{CON-5})}: Refresh tokens issued while a Google Cloud OAuth consent screen is in ``Testing'' status expire after 7 days. The system SHALL detect expired or revoked refresh tokens and handle re-authorization cleanly (\filepath{Section 5}).
+    \item \textbf{YouTube Channel Account Prerequisite (\filepath{CON-6})}: A Google account without an initialized YouTube channel cannot create playlists and returns \filepath{youtubeSignupRequired}. The system SHALL intercept this error and return actionable guidance (\filepath{Section 5}).
+    \item \textbf{Strict Pull Request Governance (\filepath{CON-7})}: Every modification to source code, \filepath{SKILL.md} definitions, or \filepath{brain/} notes SHALL go through a GitHub Pull Request with at least one human review and passing CI checks (\filepath{SB-5}, \filepath{Section 4}).
+\end{enumerate}
+\subsection{User Documentation}
+In compliance with Software Engineering Requirement \filepath{SE-7}, the project SHALL deliver:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{End-User \& Setup Guide (\filepath{README.md} \& \filepath{docs/user-guide.md})}: Step-by-step instructions for creating Google Cloud OAuth 2.0 credentials, configuring environment variables, running \filepath{local-check}, and connecting an MCP client.
+    \item \textbf{Developer API \& MCP Tool Reference (\filepath{docs/api-reference.md} \& \filepath{openapi.json})}: Complete schema documentation for all MCP Tools, MCP Resources, and the read-only HTTP verification endpoint (\filepath{GET /api/v1/health}).
+    \item \textbf{Agent Operating Guide (\filepath{AGENTS.md})}: Root-level repository guide instructing AI coding assistants on Second Brain rules, PARA structure, and citation standards (\filepath{SB-4}).
+\end{itemize}
+
+\subsection{Assumptions and Dependencies}
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Assumption 1}: The end user executing personalized tools (\filepath{FR-3}, \filepath{FR-4}, \filepath{FR-5}) has been added as an authorized test user on the team's Google Cloud OAuth consent screen.
+    \item \textbf{Assumption 2}: CI execution environments do not have access to live Google API credentials and rely 100\% on committed JSON fixtures via \filepath{FixtureMockProvider} (\filepath{TQ-5}).
+    \item \textbf{Dependency 1}: Availability of the official Python \filepath{mcp} SDK, \filepath{scikit-learn}/\filepath{numpy} for vector math, and \filepath{google-api-python-client} / \filepath{httpx} for Live Provider transport.
+\end{itemize}
+
+% =========================================================================
+% SECTION 3: EXTERNAL INTERFACE REQUIREMENTS
+% =========================================================================
+\section{External Interface Requirements}
+
+\subsection{User Interfaces}
+The system does not implement a standalone graphical user interface (GUI). Users interact with the system through an MCP-compliant conversational client (e.g., Claude Desktop) or a command-line verification client:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Structured Conversational Output}: All MCP tool outputs SHALL provide clean, human-readable Markdown tables alongside structured JSON fields (displaying video title, channel name, formatted runtime \filepath{MM:SS}, similarity score from \filepath{0.00} to \filepath{1.00}, and matching keywords).
+    \item \textbf{Interactive Confirmation Gate (\filepath{FR-5})}: When proposing a playlist, the response SHALL explicitly render a summary box showing the candidate tracks, cumulative duration vs.\ target limit, and a required prompt instructing the user to confirm before creation proceeds.
+    \item \textbf{Error Messaging Standard}: All error states (e.g., invalid video ID, quota exhaustion, expired OAuth token) SHALL return structured, non-technical remediation messages rather than raw Python stack traces.
+\end{itemize}
+
+\subsection{Hardware Interfaces}
+The system has no direct hardware interfaces beyond standard POSIX file system I/O (for SQLite database files and \filepath{brain/} Markdown files) and standard network loopback/NIC sockets.
+
+\subsection{Software Interfaces}
+
+\subsubsection{Google YouTube Data API v3 (Isolated via \texttt{YouTubeProvider})}
+All interactions with Google's REST endpoints are encapsulated behind the \filepath{YouTubeProvider} interface (\filepath{SE-6}):
+\begin{table}[htbp]
+\centering
+\caption{External YouTube Data API v3 Software Interfaces and Quota Costs}
+\begin{tabularx}{\textwidth}{>{\ttfamily}l l c X}
+\toprule
+\rowcolor{neutralgray}
+\textbf{\normalfont API Endpoint / Method} & \textbf{HTTP Verb} & \textbf{Unit Cost} & \textbf{System Usage \& Parts Requested} \\
+\midrule
+videos.list & GET & 1 & Fetch video metadata (\filepath{snippet}, \filepath{contentDetails}, \filepath{statistics}, \filepath{topicDetails}) for up to 50 video IDs per batch (\filepath{FR-1}, \filepath{FR-3}, \filepath{FR-4}, \filepath{FR-5}). \\
+channels.list & GET & 1 & Fetch channel metadata (\filepath{snippet}, \filepath{contentDetails}, \filepath{statistics}, \filepath{topicDetails}, \filepath{brandingSettings}) (\filepath{FR-2}). \\
+playlists.list & GET & 1 & Retrieve user playlists for engagement and recommendation profiling (\filepath{FR-3}, \filepath{FR-4}). \\
+playlistItems.list & GET & 1 & Fetch video items from channel upload playlists or user playlists (\filepath{FR-2}, \filepath{FR-3}, \filepath{FR-4}). \\
+subscriptions.list & GET & 1 & Retrieve authenticated user's channel subscriptions (\filepath{FR-3}, \filepath{FR-4}). \\
+search.list & GET & 100 & High-cost candidate discovery by topic/keyword; results are aggressively cached in SQLite (\filepath{FR-1}, \filepath{FR-5}). \\
+playlists.insert & POST & 50 & Create a new playlist in the user's YouTube account after confirmation (\filepath{FR-5}). \\
+playlistItems.insert & POST & 50 & Insert each confirmed video into the newly created playlist (\filepath{FR-5}). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Local SQLite Persistence Interface (\texttt{Section 9})}
+The system connects to a local SQLite 3 database (\filepath{data/youtube\_mcp.db}) via transactional repository classes managing four core tables: \filepath{quota\_ledger}, \filepath{cached\_videos}, \filepath{cached\_channels}, and \filepath{pending\_playlists}.
+
+\subsection{Communications Interfaces}
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{MCP Transport Protocol}: JSON-RPC 2.0 over Standard Input/Output (\filepath{stdio}) for local desktop AI clients and HTTP Server-Sent Events (SSE) / Streamable HTTP for networked clients.
+    \item \textbf{Local Verification \& OpenAPI HTTP Interface (\filepath{SE-7}, \filepath{Section 3})}: HTTP/1.1 server bound to \filepath{127.0.0.1} (default port \filepath{8000}) exposing \filepath{GET /api/v1/health} (read-only status and remaining quota check used by \filepath{local-check}) and \filepath{GET /openapi.json}.
+    \item \textbf{Outbound HTTPS Transport}: All live Google API requests use HTTPS over TLS 1.2+ with OAuth 2.0 Bearer tokens or API keys passed via headers/query parameters and exponential backoff on HTTP 429/5xx responses.
+\end{itemize}
+
+% =========================================================================
+% SECTION 4: SYSTEM FEATURES
+% =========================================================================
+\section{System Features}
+
+% -------------------------------------------------------------------------
+% 4.1 SYSTEM FEATURE 1: SIMILAR VIDEOS DISCOVERY (FR-1)
+% -------------------------------------------------------------------------
+\subsection{Similar Videos Discovery (\texttt{FR-1})}
+
+\subsubsection{Description}
+Given a YouTube video URL or video ID, the system retrieves the video's metadata, gathers a candidate pool of videos, computes a deterministic similarity score using TF-IDF cosine similarity and metadata overlap, and returns a ranked list of similar videos.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Second Brain Citations}: \filepath{[[brain/resources/tf-idf-vectorization.md]]}, \newline \filepath{[[brain/resources/cosine-similarity-ranking.md]]}.
+\end{itemize}
+
+\subsubsection{Stimulus/Response Sequences}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Stimulus}: AI client invokes MCP tool \filepath{find\_similar\_videos(video\_identifier="dQw4w9WgXcQ", max\_results=10)}.
+    \item \textbf{Response (Validation \& Pre-Flight)}: Server validates the 11-character ID format and checks the SQLite \filepath{quota\_ledger} to verify sufficient remaining daily quota budget (\filepath{TQ-6}).
+    \item \textbf{Response (Retrieval \& Scoring)}: Server fetches seed and candidate metadata via \filepath{YouTubeProvider} (using SQLite cache when warm), computes composite TF-IDF cosine + tag Jaccard + category similarity scores, and returns the top 10 ranked videos with similarity rationales.
+    \item \textbf{Stimulus (Negative)}: Client supplies a malformed ID (\filepath{"bad\_id"}) or a private/deleted video ID.
+    \item \textbf{Response (Negative)}: Server rejects the malformed ID prior to any provider call, or returns a structured \filepath{VideoUnavailableError} for private/deleted videos (\filepath{TQ-4}).
+\end{enumerate}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-FR1-1:}] The system SHALL accept a YouTube video identifier as a full watch URL (\filepath{youtube.com/watch?v=...}), a shortened URL (\filepath{youtu.be/...}), or a raw 11-character video ID matching regex \filepath{\textasciicircum[a-zA-Z0-9\_-]\{11\}\$}. Malformed identifiers SHALL be rejected immediately with \filepath{InvalidVideoIdentifierError} before invoking \filepath{YouTubeProvider} (\filepath{TQ-4}).
+    \item[\textbf{REQ-FR1-2:}] Prior to invoking any uncached provider method, the system SHALL query the SQLite quota ledger and reject the operation with \filepath{QuotaBudgetExceededError} if the estimated unit cost exceeds the remaining daily quota budget (\filepath{TQ-6}).
+    \item[\textbf{REQ-FR1-3:}] If the target video is private, deleted, or returns an empty \filepath{items} array from \filepath{videos.list}, the system SHALL raise a structured \filepath{VideoUnavailableError} (\filepath{TQ-4}).
+    \item[\textbf{REQ-FR1-4:}] The system SHALL construct a normalized text representation for the seed video and each candidate video using \filepath{snippet.title} (weighted $2\times$) and \filepath{snippet.description} (weighted $1\times$), compute L2-normalized TF-IDF feature vectors $\vec{v}$, and calculate pairwise cosine similarity:
+    \[
+        S_{\text{tfidf}}(A, B) = \frac{\vec{v}_A \cdot \vec{v}_B}{\|\vec{v}_A\| \|\vec{v}_B\|} \in [0.0, 1.0]
+    \]
+    \item[\textbf{REQ-FR1-5:}] The system SHALL combine $S_{\text{tfidf}}$ with tag Jaccard similarity $S_{\text{tags}} = \frac{|T_A \cap T_B|}{|T_A \cup T_B|}$ and category match $S_{\text{cat}} \in \{0, 1\}$ using configurable weights ($w_1, w_2, w_3$ summing to $1.0$). If either video has missing or empty \filepath{snippet.tags} (\filepath{TQ-4}), the system SHALL not fail or divide by zero, but SHALL dynamically re-normalize weights across $S_{\text{tfidf}}$ and $S_{\text{cat}}$.
+    \item[\textbf{REQ-FR1-6:}] The system SHALL return at most \filepath{max\_results} videos sorted in strictly descending order of composite similarity score, excluding the seed video itself, with each item containing \filepath{video\_id}, \filepath{title}, \filepath{channel\_title}, \filepath{duration\_seconds}, \filepath{similarity\_score}, and \filepath{matching\_terms}.
+\end{itemize}
+
+% -------------------------------------------------------------------------
+% 4.2 SYSTEM FEATURE 2: SIMILAR CHANNELS DISCOVERY (FR-2)
+% -------------------------------------------------------------------------
+\subsection{Similar Channels Discovery (\texttt{FR-2})}
+
+\subsubsection{Description}
+Given a YouTube channel URL, \filepath{@handle}, or channel ID (\filepath{UC...}), the system aggregates the channel's metadata and recent upload profile to return a ranked list of topically and structurally similar channels.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Second Brain Citations}: \filepath{[[brain/resources/cosine-similarity-ranking.md]]}.
+\end{itemize}
+
+\subsubsection{Stimulus/Response Sequences}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Stimulus}: AI client invokes \filepath{find\_similar\_channels(channel\_identifier="UC...", max\_results=10)}.
+    \item \textbf{Response}: Server validates the identifier, checks remaining quota, retrieves the source channel's profile and recent uploads via \filepath{YouTubeProvider}, computes composite channel similarity against candidate channels, and returns a ranked channel list.
+\end{enumerate}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-FR2-1:}] The system SHALL parse and validate channel identifiers in 24-character \filepath{UC} ID format, \filepath{@handle} format, or standard channel URL format, rejecting malformed inputs prior to provider execution (\filepath{TQ-4}).
+    \item[\textbf{REQ-FR2-2:}] The system SHALL retrieve the target channel's \filepath{snippet}, \filepath{topicDetails}, \filepath{brandingSettings}, and recent upload snippets via its \filepath{relatedPlaylists.uploads} playlist ID.
+    \item[\textbf{REQ-FR2-3:}] The system SHALL synthesize an aggregated channel document combining channel description, channel keywords, Wikipedia topic categories (\filepath{topicDetails.topicCategories}), and aggregated titles/tags of recent uploads.
+    \item[\textbf{REQ-FR2-4:}] The system SHALL rank candidate channels using TF-IDF cosine similarity over the aggregated channel documents combined with topic category Jaccard overlap and upload duration profile similarity.
+    \item[\textbf{REQ-FR2-5:}] The system SHALL return a ranked list of channels containing \filepath{channel\_id}, \filepath{title}, \filepath{handle}, \filepath{subscriber\_count}, \filepath{similarity\_score}, and \filepath{shared\_topics}.
+\end{itemize}
+
+% -------------------------------------------------------------------------
+% 4.3 SYSTEM FEATURE 3: PERSONALIZED VIDEO RECOMMENDATIONS (FR-3)
+% -------------------------------------------------------------------------
+\subsection{Personalized Video Recommendations (\texttt{FR-3})}
+
+\subsubsection{Description}
+Generates personalized video recommendations for the authenticated user based on their liked videos, channel subscriptions, and saved playlists.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Second Brain Citations}: \filepath{[[brain/resources/youtube-oauth2-flow.md]]}, \filepath{[[brain/resources/tf-idf-vectorization.md]]}.
+\end{itemize}
+
+\subsubsection{Stimulus/Response Sequences}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Stimulus}: AI client invokes \filepath{get\_recommendations(max\_results=10, focus\_topic="distributed systems")}.
+    \item \textbf{Response}: Server verifies OAuth 2.0 user authorization, retrieves the user's liked videos, subscriptions, and playlists via \filepath{YouTubeProvider}, computes a composite User Interest Profile Vector, scores unseen candidate videos, and returns ranked recommendations with human-readable explanations.
+\end{enumerate}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-FR3-1:}] The system SHALL verify a valid OAuth 2.0 access token with \filepath{youtube.readonly} scope before accessing user-scoped endpoints. If the access token is expired, the system SHALL attempt an automatic refresh; if the refresh token is expired (e.g., 7-day Testing mode limit) or revoked, the system SHALL raise \filepath{OAuthReauthorizationRequiredError} (\filepath{TQ-4}).
+    \item[\textbf{REQ-FR3-2:}] The system SHALL fetch the authenticated user's liked videos (\filepath{videos.list(myRating="like")}), subscribed channels (\filepath{subscriptions.list(mine=True)}), and user playlists (\filepath{playlists.list(mine=True)}).
+    \item[\textbf{REQ-FR3-3:}] The system SHALL construct a composite User Interest Profile by computing the recency-weighted centroid of TF-IDF vectors across the user's liked and playlist-saved videos, alongside their preferred category and duration distributions.
+    \item[\textbf{REQ-FR3-4:}] The system SHALL exclude videos already present in the user's liked list or playlists and rank unseen candidate videos (drawn from subscribed and topically similar channels) against the User Interest Profile.
+    \item[\textbf{REQ-FR3-5:}] Each recommended video in the output SHALL include an explicit \filepath{explanation} string citing which user subscriptions, liked videos, or topic clusters contributed to its score.
+\end{itemize}
+
+% -------------------------------------------------------------------------
+% 4.4 SYSTEM FEATURE 4: USER ENGAGEMENT ANALYSIS (FR-4)
+% -------------------------------------------------------------------------
+\subsection{User Engagement and Library Analysis (\texttt{FR-4})}
+
+\subsubsection{Description}
+Analyzes the authenticated user's liked videos, subscriptions, and playlists to produce quantitative breakdowns of top channels/categories, temporal trends, duration preferences, and period-over-period comparisons.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Second Brain Citations}: \filepath{[[brain/resources/youtube-api-quota-system.md]]}.
+\end{itemize}
+
+\subsubsection{Stimulus/Response Sequences}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Stimulus}: AI client invokes \filepath{analyze\_user\_engagement(period\_a\_start="2026-01-01", period\_a\_end="2026-06-30", period\_b\_start="2026-07-01", period\_b\_end="2026-11-09")}.
+    \item \textbf{Response}: Server aggregates metadata across the user's library and returns a structured analytical report covering all four mandatory dimensions.
+\end{enumerate}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-FR4-1:}] \textbf{Top Channels and Categories}: The system SHALL compute frequency counts and percentage shares of channels and YouTube \filepath{categoryId} classifications across the user's liked videos, subscriptions, and playlists.
+    \item[\textbf{REQ-FR4-2:}] \textbf{Trends Over Time}: The system SHALL bucket user library items by timestamp (monthly/quarterly) to report temporal shifts in dominant topics and categories.
+    \item[\textbf{REQ-FR4-3:}] \textbf{Duration Preferences}: The system SHALL parse ISO-8601 video durations (\filepath{PT\#H\#M\#S}) into seconds and compute mean, median, minimum, maximum, and bucket histograms (\filepath{Short <5m}, \filepath{Medium 5--20m}, \filepath{Long 20--60m}, \filepath{Deep-Dive >60m}).
+    \item[\textbf{REQ-FR4-4:}] \textbf{Period-over-Period Comparison}: Given two date ranges (Period A and Period B), the system SHALL compute deltas in top categories, top channels, engagement volume, and average video runtime between the two windows.
+    \item[\textbf{REQ-FR4-5:}] If a user library collection is empty (e.g., zero playlists or zero liked videos), the system SHALL return a valid zero-state report without raising unhandled exceptions (\filepath{TQ-4}).
+\end{itemize}
+
+% -------------------------------------------------------------------------
+% 4.5 SYSTEM FEATURE 5: CONSTRAINT-BASED PLAYLIST CREATION (FR-5)
+% -------------------------------------------------------------------------
+\subsection{Constraint-Based Playlist Creation with Confirmation Gate (\texttt{FR-5})}
+
+\subsubsection{Description}
+Accepts natural-language or structured curation constraints (topic, maximum total duration, maximum per-video duration, language), selects an optimal subset of videos satisfying all constraints, presents a draft proposal to the user, and creates the playlist in the user's YouTube account \textbf{only after explicit human confirmation}.
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{Second Brain Citations}: \filepath{[[brain/resources/playlist-duration-knapsack.md]]}, \filepath{[[brain/resources/prompt-injection-defense.md]]}.
+\end{itemize}
+
+\subsubsection{Stimulus/Response Sequences}
+\begin{enumerate}[noitemsep, topsep=2pt]
+    \item \textbf{Stimulus (Phase 1 — Proposal)}: User asks: \textit{``Create a playlist under 45 minutes on distributed systems, no video over 15 minutes, English only.''} AI client invokes \filepath{propose\_playlist(topic="distributed systems", max\_total\_minutes=45, max\_video\_minutes=15, language="en")}.
+    \item \textbf{Response (Phase 1 — Proposal)}: Server filters candidate videos by language and per-video duration ($\le 15$ mins), runs the bounded duration selector ($\sum \text{duration} \le 45$ mins), stores the draft in SQLite \filepath{pending\_playlists} with a unique \filepath{confirmation\_token}, and returns the proposed tracklist and token. \textbf{Zero write calls are made to YouTube.}
+    \item \textbf{Stimulus (Phase 2 — Confirmation)}: User reviews the proposal and replies: \textit{``Yes, confirm and create it.''} AI client invokes \filepath{confirm\_playlist(confirmation\_token="...", user\_confirmed=True)}.
+    \item \textbf{Response (Phase 2 — Execution)}: Server verifies the token, performs a pre-flight quota check for $50 + 50N$ units (\filepath{TQ-6}), invokes \filepath{playlists.insert} and \filepath{playlistItems.insert} via \filepath{YouTubeProvider}, marks the proposal as \filepath{COMPLETED} in SQLite, and returns the created playlist URL.
+\end{enumerate}
+
+\subsubsection{Functional Requirements}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-FR5-1:}] The system SHALL enforce a strict two-phase separation between playlist proposal (\filepath{propose\_playlist}) and playlist creation (\filepath{confirm\_playlist}). No single MCP tool invocation SHALL both propose and create a playlist without an intervening user confirmation step.
+    \item[\textbf{REQ-FR5-2:}] During proposal generation, the system SHALL filter out any candidate video whose parsed duration exceeds \filepath{max\_video\_duration\_minutes * 60} seconds or whose language metadata (\filepath{defaultAudioLanguage} or \filepath{defaultLanguage}) does not match the requested ISO 639-1 \filepath{language} code.
+    \item[\textbf{REQ-FR5-3:}] The system SHALL select a subset of candidate videos $S$ that maximizes total relevance/similarity score while strictly satisfying the cumulative runtime constraint:
+    \[
+        \sum_{i \in S} \text{duration\_seconds}(i) \le \text{max\_total\_duration\_minutes} \times 60
+    \]
+    \item[\textbf{REQ-FR5-4:}] The system SHALL persist each draft proposal in the SQLite \filepath{pending\_playlists} table with a cryptographically random \filepath{confirmation\_token}, the exact list of selected video IDs, calculated total duration, and an expiration timestamp.
+    \item[\textbf{REQ-FR5-5:}] When \filepath{confirm\_playlist} is invoked, the system SHALL verify that \filepath{confirmation\_token} exists, is not expired, has not already been executed (idempotency guard), and has \filepath{user\_confirmed=True}. Invalid or missing tokens SHALL raise \filepath{ConfirmationRequiredError}.
+    \item[\textbf{REQ-FR5-6:}] Before executing \filepath{playlists.insert} (50 units) and $N \times$ \filepath{playlistItems.insert} ($50N$ units), the system SHALL perform an atomic pre-flight quota check against the remaining daily budget in SQLite (\texttt{TQ-6}). If remaining quota is insufficient, the system SHALL abort before creating an empty or partial playlist.
+    \item[\textbf{REQ-FR5-7:}] If the authenticated Google account does not have an associated YouTube channel and the API returns \filepath{youtubeSignupRequired}, the system SHALL catch the error and return a clear message instructing the user to initialize a YouTube channel (\filepath{Section 5}, \filepath{TQ-4}).
+\end{itemize}
+
+% =========================================================================
+% SECTION 5: OTHER NONFUNCTIONAL REQUIREMENTS
+% =========================================================================
+\section{Other Nonfunctional Requirements}
+
+\subsection{Performance Requirements}
+\begin{itemize}[leftmargin=3.1cm, style=sameline, itemsep=4pt]
+    \item[\textbf{NFR-PERF-1:}] \textbf{Offline CI Suite Execution Time}: The complete automated unit, integration, and negative test suite executing against \filepath{FixtureMockProvider} SHALL complete in under 15 seconds on standard GitHub Actions runners (\filepath{TQ-5}).
+    \item[\textbf{NFR-PERF-2:}] \textbf{Similarity Computation Latency}: Computing TF-IDF vectorization and cosine similarity ranking over a candidate pool of up to 200 cached videos SHALL complete in under 500 milliseconds on the local server.
+    \item[\textbf{NFR-PERF-3:}] \textbf{Metadata Caching Efficiency}: Repeated queries for already-fetched video or channel IDs within the configured cache TTL SHALL be served directly from the local SQLite cache at zero YouTube API quota cost.
+\end{itemize}
+
+\subsection{Safety Requirements}
+\begin{itemize}[leftmargin=3.1cm, style=sameline, itemsep=4pt]
+    \item[\textbf{NFR-SAFE-1:}] \textbf{Pre-Flight Quota Exhaustion Safeguard (\filepath{TQ-6})}: To prevent exhausting the team's 10,000-unit daily Google Cloud quota allocation, every provider-bound workflow SHALL evaluate its required unit cost against the SQLite \filepath{quota\_ledger} before making any external HTTP request. Any workflow that would exceed the remaining daily budget SHALL be rejected prior to network execution.
+    \item[\textbf{NFR-SAFE-2:}] \textbf{Non-Destructive Account Operations}: The system SHALL only create new playlists (\filepath{playlists.insert}) and append items to newly created playlists (\filepath{playlistItems.insert}). The system SHALL NOT expose any tool capable of deleting existing user videos, deleting existing user playlists, or modifying channel subscriptions.
+    \item[\textbf{NFR-SAFE-3:}] \textbf{Transactional Rollback Safety}: All SQLite database writes SHALL execute inside explicit ACID transactions so that an unexpected process termination or power loss never leaves the quota ledger or cache in a corrupted state (\filepath{Section 9}).
+\end{itemize}
+
+\subsection{Security Requirements}
+\begin{itemize}[leftmargin=3.1cm, style=sameline, itemsep=4pt]
+    \item[\textbf{NFR-SEC-1:}] \textbf{Credential Isolation \& AI Policy (\filepath{Section 6})}: API keys, OAuth client secrets, access tokens, and refresh tokens SHALL be loaded strictly from environment variables or git-ignored local credential stores. No secret or credential SHALL ever be committed to Git, logged in plain text, or pasted into any AI tool.
+    \item[\textbf{NFR-SEC-2:}] \textbf{Prompt Injection Defense (\filepath{Section 4})}: All text fields fetched from YouTube (\filepath{title}, \filepath{description}, \filepath{tags}, \filepath{channelTitle}) SHALL be treated as untrusted external input. The system SHALL sanitize control sequences, wrap external metadata in explicit data boundaries, and enforce out-of-band confirmation tokens so untrusted video descriptions cannot trick the LLM into bypassing user confirmation in \filepath{FR-5}.
+    \item[\textbf{NFR-SEC-3:}] \textbf{Automated Secret Scanning (\filepath{Section 4})}: Every Pull Request SHALL be scanned automatically by a secret detection job in GitHub Actions before merge eligibility.
+    \item[\textbf{NFR-SEC-4:}] \textbf{Personal Data Sanitization (\filepath{Section 4})}: Recorded JSON test fixtures committed to \filepath{tests/fixtures/} SHALL contain zero personal user data, private watch/like histories, or live OAuth tokens.
+\end{itemize}
+
+\subsection{Software Quality Attributes}
+\begin{itemize}[leftmargin=3.1cm, style=sameline, itemsep=4pt]
+    \item[\textbf{NFR-QUAL-1:}] \textbf{Testability \& Dependency Isolation (\filepath{SE-6})}: 100\% of external YouTube Data API v3 calls SHALL be isolated behind the abstract \filepath{YouTubeProvider} interface, enabling deterministic unit and integration testing without live network access.
+    \item[\textbf{NFR-QUAL-2:}] \textbf{Resilience \& Rate-Limit Handling (\filepath{TQ-4})}: The live provider SHALL handle HTTP 429 (Too Many Requests) and transient HTTP 5xx responses using bounded exponential backoff with jitter, and translate API error codes (\filepath{quotaExceeded}, \filepath{youtubeSignupRequired}, \filepath{videoNotFound}) into typed domain exceptions.
+    \item[\textbf{NFR-QUAL-3:}] \textbf{Maintainability \& Linting}: All Python source code and validation scripts SHALL pass static linting and formatting checks (\filepath{ruff}) with zero errors in CI.
+    \item[\textbf{NFR-QUAL-4:}] \textbf{Interoperability}: All MCP tool schemas SHALL conform strictly to JSON Schema Draft 2020-12 and the Model Context Protocol specification so any compliant MCP client can discover and invoke them without custom adapters.
+\end{itemize}
+
+% =========================================================================
+% SECTION 6: OTHER REQUIREMENTS
+% =========================================================================
+\section{Other Requirements}
+
+\subsection{Agent Skill Requirements (SK-1 to SK-5)}
+Each agent skill is stored in its own folder inside \filepath{.agents/skills/} as a \filepath{SKILL.md} file. Each file contains standard header information and straightforward step-by-step instructions for the agent to execute.
+
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \textbf{SK-1 (brain-ingest)}: Takes raw technical documentation, notes, or session logs, adds standard header information, and saves them into the brain folder.
+    \item \textbf{SK-2 (brain-refine)}: Cleans up the brain folder by sorting notes into appropriate categories, removing duplicates, and fixing broken links.
+    \item \textbf{SK-3 (brain-query)}: Reads through saved notes to help answer technical questions and assist in drafting project documents.
+    \item \textbf{SK-4 (local-check)}: Runs a quick local check to make sure the project builds, tests pass, the server starts up, and the health endpoint responds.
+    \item \textbf{SK-5 (video-to-playlist)}: Summarizes a selected video, finds related videos, asks the user for confirmation, and creates the playlist in their YouTube account.
+\end{itemize}
+
+\subsection{Database and Persistence Requirements (\texttt{DB-1} through \texttt{DB-4})}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-DB-1:}] The system SHALL use SQLite 3 as its local persistence engine with Write-Ahead Logging enabled (\filepath{PRAGMA journal\_mode=WAL;}) and \filepath{PRAGMA busy\_timeout=5000;} upon connection initialization (\filepath{Section 9}).
+    \item[\textbf{REQ-DB-2:}] The \filepath{quota\_ledger} table SHALL store \filepath{id}, \filepath{date\_utc}, \filepath{endpoint}, \filepath{units\_cost}, \filepath{workflow\_context}, and \filepath{created\_at} to support atomic pre-flight budget queries (\filepath{TQ-6}).
+    \item[\textbf{REQ-DB-3:}] The \filepath{cached\_videos} and \filepath{cached\_channels} tables SHALL store serialized metadata payloads alongside \filepath{fetched\_at} timestamps to minimize redundant API calls.
+    \item[\textbf{REQ-DB-4:}] The \filepath{pending\_playlists} table SHALL store \filepath{confirmation\_token} (Primary Key), \filepath{topic}, \filepath{constraints\_json}, \filepath{selected\_video\_ids\_json}, \filepath{total\_duration\_seconds}, \filepath{estimated\_quota\_cost}, \filepath{status} (\filepath{PENDING} | \filepath{CONFIRMED} | \filepath{EXPIRED}), and \filepath{expires\_at}.
+\end{itemize}
+
+\subsection{Testing, Verification, and Quality Requirements (\texttt{TQ-1} through \texttt{TQ-8})}
+\begin{itemize}[leftmargin=2.8cm, style=sameline, itemsep=4pt]
+    \item[\textbf{REQ-TQ-1:}] \textbf{Unit Testing}: The test suite SHALL include isolated unit tests for TF-IDF/cosine similarity scoring, ISO-8601 duration parsing, knapsack duration filtering, and MCP tool input/output serialization.
+    \item[\textbf{REQ-TQ-2:}] \textbf{Integration Testing}: The test suite SHALL verify interactions between domain services, the SQLite WAL database, and \filepath{YouTubeProvider} implementations.
+    \item[\textbf{REQ-TQ-3:}] \textbf{System Testing}: End-to-end tests SHALL verify complete workflows for \filepath{FR-1}, \filepath{FR-2}, \filepath{FR-3}, \filepath{FR-4}, and \filepath{FR-5} through the MCP server interface.
+    \item[\textbf{REQ-TQ-4:}] \textbf{Negative \& Edge-Case Testing}: Automated tests SHALL explicitly verify handling of invalid video/channel IDs, private or deleted videos, videos with missing tags, \filepath{quotaExceeded}, \filepath{youtubeSignupRequired}, expired OAuth tokens, and HTTP 429 rate limiting.
+    \item[\textbf{REQ-TQ-5:}] \textbf{Fixture vs.\ Live API Split}: All Pull Request CI tests SHALL run strictly against recorded JSON fixtures/mocks. Live YouTube API smoke tests SHALL be isolated in a separate manual or scheduled workflow with a strict quota budget.
+    \item[\textbf{REQ-TQ-6:}] \textbf{Quota Cost Pre-Flight Verification}: Automated tests SHALL verify that any single operation or multi-step workflow whose unit cost exceeds the remaining SQLite daily budget is rejected \textbf{before} invoking the provider.
+    \item[\textbf{REQ-TQ-7:}] \textbf{Skill Evaluations}: All five Agent Skills (\filepath{SK-1}--\filepath{SK-5}) SHALL be evaluated prior to each stage submission, with execution transcripts and pass/fail results recorded in \filepath{docs/test-results.md}.
+    \item[\textbf{REQ-TQ-8:}] \textbf{Defect Log \& Regression Testing}: Every significant defect encountered during development SHALL be recorded in \filepath{docs/defect-log.md} and locked with a permanent automated regression test.
+\end{itemize}
+
+% =========================================================================
+% APPENDIX A: GLOSSARY
+% =========================================================================
+\newpage
+\appendix
+% =========================================================================
+% APPENDIX A: GLOSSARY
+% =========================================================================
+\newpage
+\appendix
+\section{Glossary}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.8cm} X}
+\toprule
+\rowcolor{neutralgray}
+Term & Definition \\
+\midrule
+Cosine Similarity & A measure of similarity between two non-zero TF-IDF feature vectors calculated as the cosine of the angle between them ($\frac{\vec{A} \cdot \vec{B}}{\|\vec{A}\|\|\vec{B}\|}$). \\
+Jaccard Similarity & Statistic used for comparing the overlap of discrete sets (such as video tags or channel topics), defined as $\frac{|A \cap B|}{|A \cup B|}$. \\
+TF-IDF & Term Frequency-Inverse Document Frequency — a numerical statistic reflecting how important a word is to a document within a collection of video/channel metadata. \\
+\bottomrule
+\end{tabularx}
+
+% =========================================================================
+% APPENDIX B: ANALYSIS MODELS & TRACEABILITY MATRIX SCHEMA
+% =========================================================================
+\section{Analysis Models}
+
+
+\subsection{Traceability Matrix}
+This matrix maps each requirement to its associated agent skill, automated verification test, and supporting research note in the Second Brain.
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash\ttfamily\footnotesize}p{2.3cm} >{\raggedright\arraybackslash\small}p{2.8cm} >{\centering\arraybackslash\ttfamily\footnotesize}p{1.1cm} >{\raggedright\arraybackslash\ttfamily\footnotesize}X >{\raggedright\arraybackslash\ttfamily\footnotesize}X @{}}
+\hline
+\normalfont\textbf{Req ID} & \normalfont\textbf{Description} & \normalfont\textbf{Skill} & \normalfont\textbf{Automated Test} & \normalfont\textbf{Brain Note} \\
+\hline
+REQ-FR1-1..6 & Similar Videos Discovery & SK-5 & tests/unit/\newline test\_similarity.py & [[cosine-similarity-\newline ranking]] \\[4pt]
+REQ-FR2-1..5 & Similar Channels Discovery & --- & tests/unit/\newline test\_channels.py & [[cosine-similarity-\newline ranking]] \\[4pt]
+REQ-FR3-1..5 & Personalized Recommendations & --- & tests/integration/\newline test\_recs.py & [[youtube-oauth2-\newline flow]] \\[4pt]
+REQ-FR4-1..5 & Engagement Analytics & --- & tests/unit/\newline test\_analytics.py & [[youtube-api-\newline quota-system]] \\[4pt]
+REQ-FR5-1..7 & Constraint Playlist Curation & SK-5 & tests/system/\newline test\_playlist.py & [[playlist-duration-\newline knapsack]] \\[4pt]
+NFR-SAFE-1 /\newline TQ-6 & Pre-Flight Quota Guard & SK-4 & tests/unit/\newline test\_quota\_guard.py & [[youtube-api-\newline quota-system]] \\[4pt]
+NFR-SEC-3 & Prompt Injection Defense & SK-5 & tests/security/\newline test\_injection.py & [[prompt-injection-\newline defense]] \\[4pt]
+NFR-QUAL-1 /\newline SE-6 & Provider Isolation Interface & SK-4 & tests/integration/\newline test\_provider.py & [[provider-pattern-\newline isolation]] \\[4pt]
+REQ-DB-1..4 & SQLite WAL Persistence & SK-4 & tests/integration/\newline test\_sqlite\_wal.py & [[sqlite-wal-mode]] \\[4pt]
+SK-1..3 & Second Brain Workflows & SK-1..3 & scripts/\newline validate\_brain.py & [[mcp-protocol-\newline architecture]] \\[4pt]
+SK-4 & Local Workstation Check & SK-4 & scripts/\newline validate\_skills.py & [[agent-skills-\newline format]] \\
+\hline
+\end{tabularx}
+\end{table}
+% =========================================================================
+% APPENDIX C: TO BE DETERMINED (TBD) LIST
+% =========================================================================
+\section{To Be Determined (TBD) List}
+
+The following architectural and operational tuning parameters are intentionally deferred to Stage 2 (Design \& ADRs) so they can be calibrated against empirical benchmarks and recorded in \filepath{docs/adr/}:
+
+\begin{table}[htbp]
+\centering
+\caption{Tracked To Be Determined (TBD) Items for Stage 2 Closure}
+\begin{tabularx}{\textwidth}{>{\bfseries}l l X l}
+\toprule
+\rowcolor{neutralgray}
+TBD ID & Related Section & Description of Deferred Design Decision & Target Resolution \\
+\midrule
+TBD-01 & Section 4.1 / 5.2 & \textbf{Per-Workflow Quota Soft Warning Threshold}: While \filepath{TQ-6} enforces a hard pre-flight block against the remaining daily budget (10,000 units), determine in Stage 2 whether individual high-cost discovery workflows should also warn or paginate when candidate pool acquisition exceeds a configurable unit threshold. & Stage 2 ADR \\
+TBD-02 & Section 4.1.3 & \textbf{Similarity Feature Weights ($w_1, w_2, w_3$)}: Calibrate exact default weights between TF-IDF cosine similarity ($w_1$), tag Jaccard overlap ($w_2$), and category match ($w_3$) using offline evaluation fixtures. & Stage 2 ADR \\
+TBD-03 & Section 5.1 / 6.2 & \textbf{SQLite Metadata Cache TTL}: Determine optimal expiration window (e.g., 24 hours vs.\ 7 days) for cached video and channel snippets in \filepath{cached\_videos} and \filepath{cached\_channels}. & Stage 2 Design Doc \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\end{document}

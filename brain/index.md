@@ -20,6 +20,9 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 ## Core Vault Files
 - [[log]]
 
+## Projects
+- [[srs-requirements-index]]
+
 ## Active Notes (Add links here as PRs merge)
 - [[youtube-api-quota-system]]
 - [[youtube-oauth2-flow]]

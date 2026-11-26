@@ -21,3 +21,4 @@ type: log
 | 2026-11-26 | Brain Ingest | Added [[agent-skills-format-specification]] | @StrangelyDone |
 | 2026-11-26 | Brain Ingest | Added [[fastmcp-python-sdk]] | @StrangelyDone |
 | 2026-11-26 | Brain Ingest | Added [[youtube-engagement-library-analytics]] | @StrangelyDone |
+| 2026-11-26 | Brain Ingest | Added [[srs-requirements-index]] summarizing Stage 1 SRS | @StrangelyDone |
