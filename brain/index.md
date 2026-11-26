@@ -23,6 +23,9 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 ## Projects
 - [[srs-requirements-index]]
 
+## Inbox
+- [[ai-session-2026-11-26]] — Stage 2 AI session log covering ADRs `001`–`006`, `TBD-01`..`TBD-03`, and `SB-3` CI validation for Issue #20.
+
 ## Active Notes (Add links here as PRs merge)
 - [[youtube-api-quota-system]]
 - [[youtube-oauth2-flow]]
