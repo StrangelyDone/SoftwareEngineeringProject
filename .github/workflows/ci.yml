@@ -56,6 +56,9 @@ jobs:
       - name: Validate brain notes (schema & broken links)
         run: python scripts/validate_brain.py
 
+      - name: Validate ADR Second Brain citations (SB-3)
+        run: python scripts/validate_adrs.py
+
   secret-scan:
     name: Secret Scanning
     runs-on: ubuntu-latest

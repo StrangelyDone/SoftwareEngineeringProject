@@ -42,6 +42,7 @@ We are building an MCP (Model Context Protocol) server in **Python 3.11+** (usin
 │   └── traceability-matrix.md             # SE-5: Req -> Issue -> PR -> Test -> Skill -> Brain Note
 ├── scripts/
 │   ├── check_brain.py                     # Validates brain/ YAML schema, root files & [[wikilinks]]
+│   ├── validate_adrs.py                   # Validates docs/adr/NNN-*.md SB-3 Second Brain citations
 │   └── validate_skills.py                 # Validates .agents/skills/*/SKILL.md frontmatter & naming
 ├── src/
 │   └── youtube_mcp/
@@ -103,10 +104,11 @@ Run these checks locally before pushing any branch; CI runs the same gates autom
 - **Automated Tests:** `pytest -v` *(CI tests **must** run offline against recorded fixtures/mocks—never the live YouTube API, per `TQ-5`)*
 - **Skill Validation:** `python scripts/validate_skills.py`
 - **Second Brain Validation:** `python scripts/check_brain.py`
+- **ADR Citation Validation:** `python scripts/validate_adrs.py`
 - **Required Test Coverage:** Unit (`TQ-1`), integration (`TQ-2`), end-to-end MCP (`TQ-3`), negative/security (`TQ-4`), quota pre-flight (`TQ-6`), skill evaluations (`TQ-7`), and permanent regression tests for every fixed defect (`TQ-8`).
 - **CI Status Checks Required to Merge:**
   1. `Build, Lint & Test` (`pip install -e ".[dev]"`, `ruff check .`, `pytest -v`)
-  2. `Validate Skills & Brain` (`validate_skills.py`, `check_brain.py`)
+  2. `Validate Skills & Brain` (`validate_skills.py`, `check_brain.py`, `validate_adrs.py`)
   3. `Secret Scanning` (TruffleHog)
 
 ---
