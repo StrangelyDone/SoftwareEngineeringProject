@@ -25,3 +25,7 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[youtube-oauth2-flow]]
 - [[sqlite-wal-mode]]
 - [[provider-pattern-isolation]]
+- [[mcp-architecture]] — MCP's host-client-server architecture, primitives, transports, and YouTube project integration.
+- [[agent-skills-format-specification]] — Open skill directory, metadata, instruction, progressive-disclosure, and citation conventions.
+- [[fastmcp-python-sdk]] — Python FastMCP tools, validation, structured results, error mapping, and ASGI integration.
+- [[youtube-engagement-library-analytics]] — Channel/category distributions, duration metrics, time-series buckets, and period comparisons.

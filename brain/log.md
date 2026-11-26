@@ -17,3 +17,7 @@ type: log
 | 2026-11-26 | 19:30 +05:30 | Brain Ingest | Added [[tf-idf-cosine-similarity-for-video-and-channel-ranking]] on local TF-IDF/cosine ranking from YouTube metadata | Abhinav |
 | 2026-11-26 | 19:30 +05:30 | Brain Ingest | Added [[iso-8601-duration-parsing-and-playlist-constraint-packing]] on duration parsing and playlist constraint packing | Abhinav |
 | 2026-11-26 | 19:30 +05:30 | Brain Ingest | Added [[prompt-injection-defense-for-untrusted-youtube-metadata]] on prompt-injection defenses for untrusted metadata | Abhinav |
+| 2026-11-26 | Brain Ingest | Added [[mcp-architecture]] | @StrangelyDone |
+| 2026-11-26 | Brain Ingest | Added [[agent-skills-format-specification]] | @StrangelyDone |
+| 2026-11-26 | Brain Ingest | Added [[fastmcp-python-sdk]] | @StrangelyDone |
+| 2026-11-26 | Brain Ingest | Added [[youtube-engagement-library-analytics]] | @StrangelyDone |
