@@ -84,7 +84,7 @@ def build_valid_targets(all_files: list[Path]) -> set[str]:
 
 
 def normalize_wikilink(raw_link: str) -> str:
-    """Strip alias (| or \| in tables), heading (#...), OS slashes, and leading ./ or /."""
+    """Strip alias (| or | in tables), heading (#...), OS slashes, and leading ./ or /."""
     target = re.split(r"\\?\|", raw_link, maxsplit=1)[0]
     target = target.split("#", 1)[0]
     target = target.strip().replace("\\", "/")
