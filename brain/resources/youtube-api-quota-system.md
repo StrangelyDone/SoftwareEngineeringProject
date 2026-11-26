@@ -17,10 +17,10 @@ type: resource
   - `videos.list`: **1 unit** per call (low cost).
 
 ## System Design Implications
-- **Pre-call Budget Guard (`TQ-6`)**: Track quota cost per request in local storage (see sqlite-wal-mode) and reject workflows that would exceed the remaining daily budget *before* executing any outbound HTTP call.
-- **Offline CI Testing (`TQ-5`)**: Automated CI test suites must run against recorded fixtures/mocks via a provider interface (see provider-pattern-isolation) instead of burning live quota.
+- **Pre-call Budget Guard (`TQ-6`)**: Track quota cost per request in local storage (see `[[sqlite-wal-mode]]`) and reject workflows that would exceed the remaining daily budget *before* executing any outbound HTTP call.
+- **Offline CI Testing (`TQ-5`)**: Automated CI test suites must run against recorded fixtures/mocks via a provider interface (see `[[provider-pattern-isolation]]`) instead of burning live quota.
 - **Caching**: Cache video and channel metadata aggressively to avoid redundant fetches.
 
 ## Traceability & Links
 - Requirements: `FR-1`, `FR-5`, `TQ-5`, `TQ-6`
-- Related Notes: provider-pattern-isolation, sqlite-wal-mode, youtube-oauth2-flow
+- Related Notes: `[[provider-pattern-isolation]]`, `[[sqlite-wal-mode]]`, `[[youtube-oauth2-flow]]`
