@@ -18,6 +18,7 @@ DEFAULT_MAX_SEARCH_PAGES = 2
 DEFAULT_LOG_LEVEL = "INFO"
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8000
+DEFAULT_LIVE_MAX_RETRIES = 3
 
 
 def resolve_db_path(database_url: str) -> Path:
@@ -72,6 +73,7 @@ class Settings(BaseModel):
     log_level: str = Field(default=DEFAULT_LOG_LEVEL)
     host: str = Field(default=DEFAULT_HOST)
     port: int = Field(default=DEFAULT_PORT, ge=1, le=65535)
+    live_max_retries: int = Field(default=DEFAULT_LIVE_MAX_RETRIES, ge=0)
 
     youtube_api_key: SecretStr | None = Field(default=None)
     youtube_oauth_client_id: str | None = Field(default=None)
@@ -130,6 +132,9 @@ def load_settings(env_file: Path | str | None = Path(".env")) -> Settings:
         log_level=merged_env.get("LOG_LEVEL", DEFAULT_LOG_LEVEL),
         host=merged_env.get("HOST", DEFAULT_HOST),
         port=int(merged_env.get("PORT", DEFAULT_PORT)),
+        live_max_retries=int(
+            merged_env.get("LIVE_MAX_RETRIES", DEFAULT_LIVE_MAX_RETRIES)
+        ),
         youtube_api_key=SecretStr(api_key_raw) if api_key_raw is not None else None,
         youtube_oauth_client_id=_optional_nonempty(merged_env, "YOUTUBE_OAUTH_CLIENT_ID"),
         youtube_oauth_client_secret=(

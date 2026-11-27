@@ -25,6 +25,7 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[stage-1-review]] — Stage 1 retrospective and actions for Stage 2.
 - [[stage-2-review]] — Stage 2 architecture, design, and verification retrospective (`SB-2`)
 ## Inbox
+- [[ai-session-2026-11-27-m2-3-live-youtube-provider]] — M2.3 live YouTube provider, OAuth refresh, and bounded backoff (Issue #46).
 - [[ai-session-2026-11-27-m2-2-fixture-mock-provider]] — M2.2 sanitized fixtures and full offline mock provider (Issue #45).
 - [[ai-session-2026-11-27-m2-1-provider-contract]] — M2.1 typed provider models, exception hierarchy, and full provider ABC (Issue #44).
 - [[ai-session-2026-11-24]] — Stage 1 vault setup and project scoping.
