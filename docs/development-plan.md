@@ -76,11 +76,11 @@ flowchart LR
 **Goal:** Complete full ACID repository methods for all 4 SQLite tables and implement atomic `TQ-6` pre-flight quota checking with the 300-unit soft warning threshold.  
 **Dependencies:** `M0.2`.
 
-| Task ID | Deliverable / Scope | Requirements / ADRs | Owner | GitHub Issue | Target Date |
-|---|---|---|---|---|---|
-| `M1.1` | Implement `SQLiteRepository` CRUD + TTL queries (`cached_videos` 24h, `cached_channels` 7d, `pending_playlists` 15m one-way status transitions) | `REQ-DB-1`–`4`, `NFR-PERF-3`, `NFR-SAFE-3`, `ADR-002` | `<Teammate B>` | `#<ID>` | 2026-12-02 |
-| `M1.2` | Implement `QuotaGuard` (`estimate_cost`, atomic `preflight_check` against 10,000-unit daily cap, `SOFT_WARNING_THRESHOLD_UNITS=300`, `max_search_pages=2`, `commit_usage`) | `TQ-6`, `CON-3`, `NFR-SAFE-1`, `TBD-01`, `ADR-006` | `<Teammate B>` | `#<ID>` | 2026-12-03 |
-| `M1.3` | Write `tests/test_repository.py` and `tests/test_quota_guard.py` verifying zero-cost cache hits, stale refresh, pre-flight rejection before provider call, and 300-unit soft warning | `TQ-1`, `TQ-6`, `ADR-002`, `ADR-006` | `<Teammate B>` | `#<ID>` | 2026-12-04 |
+| Task ID | Deliverable / Scope                                                                                                                                                                  | Requirements / ADRs                                   | Owner     | GitHub Issue | Target Date |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | --------- | ------------ | ----------- |
+| `M1.1`  | Implement `SQLiteRepository` CRUD + TTL queries (`cached_videos` 24h, `cached_channels` 7d, `pending_playlists` 15m one-way status transitions)                                      | `REQ-DB-1`–`4`, `NFR-PERF-3`, `NFR-SAFE-3`, `ADR-002` | `Abhinav` | `#39`        | 2026-11-27  |
+| `M1.2`  | Implement `QuotaGuard` (`estimate_cost`, atomic `preflight_check` against 10,000-unit daily cap, `SOFT_WARNING_THRESHOLD_UNITS=300`, `max_search_pages=2`, `commit_usage`)           | `TQ-6`, `CON-3`, `NFR-SAFE-1`, `TBD-01`, `ADR-006`    | `Abhinav` | `#40`        | 2026-11-27  |
+| `M1.3`  | Write `tests/test_repository.py` and `tests/test_quota_guard.py` verifying zero-cost cache hits, stale refresh, pre-flight rejection before provider call, and 300-unit soft warning | `TQ-1`, `TQ-6`, `ADR-002`, `ADR-006`                  | `Abhinav` | `#41`        | 2026-11-27  |
 
 **Exit Criteria:** Any workflow exceeding remaining daily quota raises `QuotaBudgetExceededError` with 0 provider calls verified by unit tests.
 
