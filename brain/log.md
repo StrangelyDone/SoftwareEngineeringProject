@@ -24,3 +24,10 @@ type: log
 | 2026-11-26 | Brain Ingest | Added [[srs-requirements-index]] summarizing Stage 1 SRS | @StrangelyDone |
 | 2026-11-26 | AI Session Log | Added [[ai-session-2026-11-26]] documenting Stage 2 ADRs and SB-3 CI validation | @StrangelyDone |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m0-server-skeleton]] | @StrangelyDone |
+| 2026-11-27 | Brain Ingest — SK-1 evaluation (17:03 +05:30) | Verified existing Stage 1/2 notes and audit entries; Second Brain validation passed | @Abhinav |
+| 2026-11-27 | Brain Refine — SK-2 evaluation (17:03 +05:30) | Moved [[iso-8601-duration-parsing-and-playlist-constraint-packing]], [[prompt-injection-defense-for-untrusted-youtube-metadata]], and [[tf-idf-cosine-similarity-for-video-and-channel-ranking]] to resources; synchronized [[index]] | @Abhinav |
+| 2026-11-27 | Brain Query — SK-3 query (17:03 +05:30) | Queried ADR, WAL, TTL, and quota guard; cited [[sqlite-wal-mode]], [[youtube-api-quota-system]], and [[ai-session-2026-11-26]] | @Abhinav |
+| 2026-11-27 | Brain Query — SK-3 query (17:03 +05:30) | Queried metadata/playlist-write defenses; cited [[prompt-injection-defense-for-untrusted-youtube-metadata]] | @Abhinav |
+| 2026-11-27 | Brain Query — SK-3 query (17:03 +05:30) | Queried missing-tag scoring; cited [[tf-idf-cosine-similarity-for-video-and-channel-ranking]] and [[ai-session-2026-11-26]] | @Abhinav |
+| 2026-11-27 | Local Check — SK-4 evaluation (17:03 +05:30) | Completed offline local-check; health/OpenAPI passed and server cleanup verified | @Abhinav |
+| 2026-11-27 | AI Session Log (17:03 +05:30) | Added [[ai-session-2026-11-27]] for Stage 2 architecture/planning and TQ-7 evaluations | @Abhinav |

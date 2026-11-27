@@ -22,10 +22,13 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 
 ## Projects
 - [[srs-requirements-index]]
+- [[stage-1-review]] — Stage 1 retrospective and actions for Stage 2.
 
 ## Inbox
+- [[ai-session-2026-11-24]] — Stage 1 vault setup and project scoping.
 - [[ai-session-2026-11-26]] — Stage 2 AI session log covering ADRs `001`–`006`, `TBD-01`..`TBD-03`, and `SB-3` CI validation for Issue #20.
 - [[ai-session-2026-11-27-m0-server-skeleton]] — Stage 2 AI session log for Milestone `M0.2` server skeleton, SQLite WAL, and `YouTubeProvider` boundary (Issue `#26`, PR `#33`).
+- [[ai-session-2026-11-27]] — Stage 2 architecture/planning retrospective and M0.5 skill evaluations for Issue #29.
 
 ## Active Notes (Add links here as PRs merge)
 - [[youtube-api-quota-system]]
@@ -36,3 +39,6 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[agent-skills-format-specification]] — Open skill directory, metadata, instruction, progressive-disclosure, and citation conventions.
 - [[fastmcp-python-sdk]] — Python FastMCP tools, validation, structured results, error mapping, and ASGI integration.
 - [[youtube-engagement-library-analytics]] — Channel/category distributions, duration metrics, time-series buckets, and period comparisons.
+- [[iso-8601-duration-parsing-and-playlist-constraint-packing]] — Parse video durations and enforce playlist constraints before confirmation.
+- [[prompt-injection-defense-for-untrusted-youtube-metadata]] — Keep YouTube metadata untrusted and require explicit playlist confirmation.
+- [[tf-idf-cosine-similarity-for-video-and-channel-ranking]] — Compute deterministic similarity rankings from official metadata.
