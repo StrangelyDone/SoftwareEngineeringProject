@@ -9,8 +9,6 @@ from youtube_mcp.config import (
     DEFAULT_DAILY_QUOTA_BUDGET,
     DEFAULT_MAX_SEARCH_PAGES,
     DEFAULT_SOFT_WARNING_THRESHOLD_UNITS,
-    Settings,
-    load_settings,
 )
 from youtube_mcp.exceptions import QuotaBudgetExceededError
 from youtube_mcp.repository import SQLiteRepository, format_utc, utc_date_str
@@ -54,7 +52,7 @@ class QuotaGuard:
         repo: SQLiteRepository,
         *,
         daily_quota_budget: int = DEFAULT_DAILY_QUOTA_BUDGET,
-        soft_warning_threshold: int = DEFAULT_SOFT_WARNING_THRESHOLD,
+        soft_warning_threshold: int = DEFAULT_SOFT_WARNING_THRESHOLD_UNITS,
         max_search_pages: int = DEFAULT_MAX_SEARCH_PAGES,
     ) -> None:
         self.repo = repo
