@@ -28,7 +28,7 @@
 
 | Requirement ID | GitHub Issue | PR | Automated Test | Agent Skill | Second Brain Note |
 |---|---|---|---|---|---|
-| **`REQ-DB-1`** SQLite 3 WAL Mode & Pragmas | `#20`, `#22`, `#26` | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#33` | `tests/test_smoke.py`, Planned: `tests/test_db_wal.py` | `local-check` (`SK-4`) | [[sqlite-wal-mode]], [[srs-requirements-index]] |
+| **`REQ-DB-1`** SQLite 3 WAL Mode & Pragmas | `#20`, `#22`, `#26`, `#27` | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#33` | `tests/test_smoke.py`, `tests/test_db_wal.py` | `local-check` (`SK-4`) | [[sqlite-wal-mode]], [[srs-requirements-index]] |
 | **`REQ-DB-2`** `quota_ledger` Table & Atomic Accounting | `#20`, `#22`, Planned (Issue `#<M1-DB>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>` | Planned: `tests/test_repository.py`, `tests/test_quota_guard.py` | `local-check` (`SK-4`) | [[sqlite-wal-mode]], [[youtube-api-quota-system]] |
 | **`REQ-DB-3`** `cached_videos` (24h) & `cached_channels` (7d) Tables | `#20`, `#22`, Planned (Issue `#<M1-DB>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>` | Planned: `tests/test_repository.py` | N/A | [[sqlite-wal-mode]], [[youtube-api-quota-system]] |
 | **`REQ-DB-4`** `pending_playlists` Table & 15-min Token Lifecycle | `#20`, `#22`, Planned (Issue `#<M1-DB>`, `#<M3-REC>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>` | Planned: `tests/test_repository.py`, `tests/test_negative_security.py` | `video-to-playlist` (`SK-5`, Stage 3) | [[sqlite-wal-mode]], [[prompt-injection-defense-for-untrusted-youtube-metadata]] |
@@ -39,11 +39,11 @@
 
 | Requirement ID | GitHub Issue | PR | Automated Test | Agent Skill | Second Brain Note |
 |---|---|---|---|---|---|
-| **`TQ-1`** Unit Tests (Similarity, Duration, Knapsack, Quota Math) | `#20`, Planned (Issue `#<M1-DB>`, `#<M3-SIM>`, `#<M3-REC>`) | PR `#<ADR-PR>` | Planned: `tests/test_similarity.py`, `tests/test_duration_knapsack.py`, `tests/test_quota_guard.py` | `local-check` (`SK-4`) | [[tf-idf-cosine-similarity-for-video-and-channel-ranking]], [[iso-8601-duration-parsing-and-playlist-constraint-packing]] |
-| **`TQ-2`** Integration Tests (Provider + Services + SQLite) | `#20`, `#26`, Planned (Issue `#<M2-PROV>`, `#<M4-MCP>`) | PR `#<ADR-PR>`, PR `#33` | `tests/test_smoke.py`, Planned: `tests/test_health.py`, `tests/test_provider_contract.py`, `tests/test_service_integration.py` | `local-check` (`SK-4`) | [[provider-pattern-isolation]], [[sqlite-wal-mode]] |
+| **`TQ-1`** Unit Tests (Similarity, Duration, Knapsack, Quota Math) | `#20`, `#27`, Planned (Issue `#<M1-DB>`, `#<M3-SIM>`, `#<M3-REC>`) | PR `#<ADR-PR>` | `tests/test_db_wal.py`, Planned: `tests/test_similarity.py`, `tests/test_duration_knapsack.py`, `tests/test_quota_guard.py` | `local-check` (`SK-4`) | [[tf-idf-cosine-similarity-for-video-and-channel-ranking]], [[iso-8601-duration-parsing-and-playlist-constraint-packing]] |
+| **`TQ-2`** Integration Tests (Provider + Services + SQLite) | `#20`, `#26`, `#27`, Planned (Issue `#<M2-PROV>`, `#<M4-MCP>`) | PR `#<ADR-PR>`, PR `#33` | `tests/test_smoke.py`, `tests/test_health.py`, `tests/test_provider_contract.py`, `tests/test_service_integration.py` | `local-check` (`SK-4`) | [[provider-pattern-isolation]], [[sqlite-wal-mode]] |
 | **`TQ-3`** End-to-End MCP Protocol Tests (`FR-1`..`FR-5`) | `#22`, Planned (Issue `#<M4-MCP>`) | PR `#<ARCH-PR>` | Planned: `tests/test_mcp_e2e.py` | `local-check` (`SK-4`), `video-to-playlist` (`SK-5`) | [[mcp-architecture]], [[fastmcp-python-sdk]] |
 | **`TQ-4`** Negative & Security Tests (Edge Cases, OAuth 7d Expiry, Prompt Injection) | `#20`, `#22`, Planned (Issue `#<M2-PROV>`, `#<M5-SEC>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>` | Planned: `tests/test_negative_security.py` | `video-to-playlist` (`SK-5`, Stage 3) | [[youtube-oauth2-flow]], [[prompt-injection-defense-for-untrusted-youtube-metadata]], [[provider-pattern-isolation]] |
-| **`TQ-5`** Offline Fixture-Based CI (Zero Live YouTube Calls on PRs) | `#20`, `#26`, Planned (Issue `#<M2-PROV>`) | PR `#<ADR-PR>`, Stage 1 CI PR `#<CI-PR>`, PR `#33` | `.github/workflows/ci.yml`, `tests/test_smoke.py`, Planned: `tests/fixtures/*.json` | `local-check` (`SK-4`) | [[provider-pattern-isolation]], [[youtube-api-quota-system]] |
+| **`TQ-5`** Offline Fixture-Based CI (Zero Live YouTube Calls on PRs) | `#20`, `#26`, `#27`, Planned (Issue `#<M2-PROV>`) | PR `#<ADR-PR>`, Stage 1 CI PR `#<CI-PR>`, PR `#33` | `.github/workflows/ci.yml`, `tests/test_smoke.py`, `tests/test_db_wal.py`, `tests/test_health.py`, Planned: `tests/fixtures/*.json` | `local-check` (`SK-4`) | [[provider-pattern-isolation]], [[youtube-api-quota-system]] |
 | **`TQ-6`** Pre-Flight Quota Guard (Reject Before API Call) | `#20`, `#22`, Planned (Issue `#<M1-DB>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>` | Planned: `tests/test_quota_guard.py` | `local-check` (`SK-4`) | [[youtube-api-quota-system]], [[sqlite-wal-mode]] |
 | **`TQ-7`** Pre-Submission Agent Skill Evaluations | Planned (Issue `#<M0-EVAL>`, `#<M5-SEC>`) | Planned | `scripts/validate_skills.py`, Planned: `docs/test-results.md` | `brain-ingest`, `brain-refine`, `brain-query`, `local-check`, `video-to-playlist` | [[srs-requirements-index]] |
 | **`TQ-8`** Regression Tests for Every Fixed Defect | Ongoing (linked per bug issue) | Ongoing | Planned: `tests/test_regressions.py` | `local-check` (`SK-4`) | [[srs-requirements-index]] |
@@ -60,7 +60,7 @@
 | **`SE-4`** Development Plan & Task Breakdown (`docs/development-plan.md`) | Planned (Issue `#<M0-PLAN>`) | Planned | Peer Review Checklist | `brain-query` (`SK-3`) | [[srs-requirements-index]] |
 | **`SE-5`** Live Traceability Matrix (`docs/traceability-matrix.md`) | Planned (Issue `#<M0-PLAN>`) | Planned | Peer Review & Link Check | `brain-query` (`SK-3`) | [[srs-requirements-index]] |
 | **`SE-6`** Abstract `YouTubeProvider` Boundary (`src/youtube_mcp/providers/`) | `#20`, `#22`, `#26`, Planned (Issue `#<M2-PROV>`) | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#33` | `tests/test_smoke.py`, Planned: `tests/test_provider_contract.py` | `local-check` (`SK-4`) | [[provider-pattern-isolation]] |
-| **`SE-7`** HTTP Health (`GET /api/v1/health`) & OpenAPI (`/openapi.json`) | `#20`, `#22`, `#26` | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#33` | `tests/test_smoke.py`, Planned: `tests/test_health.py` | `local-check` (`SK-4`) | [[fastmcp-python-sdk]], [[mcp-architecture]] |
+| **`SE-7`** HTTP Health (`GET /api/v1/health`) & OpenAPI (`/openapi.json`) | `#20`, `#22`, `#26`, `#27` | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#33` | `tests/test_smoke.py`, `tests/test_health.py` | `local-check` (`SK-4`) | [[fastmcp-python-sdk]], [[mcp-architecture]] |
 
 ---
 
