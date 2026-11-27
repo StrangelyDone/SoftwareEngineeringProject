@@ -84,7 +84,7 @@
 | **`SK-1`** Ingest Research into `brain/inbox/` + `brain/log.md` | Stage 1 (`#<SK1-ISSUE>`) | Stage 1 (PR `#<SK1-PR>`) | `scripts/validate_skills.py`, `docs/test-results.md` (Planned) | `.agents/skills/brain-ingest/SKILL.md` | [[srs-requirements-index]] |
 | **`SK-2`** Refine PARA Folders, Deduplicate & Fix Links | Stage 2 Step 1 (`#<SK2-ISSUE>`) | Stage 2 (PR `#<SK2-PR>`) | `scripts/validate_skills.py`, `scripts/check_brain.py` | `.agents/skills/brain-refine/SKILL.md` | [[srs-requirements-index]] |
 | **`SK-3`** Grounded Vault Querying & ADR/Doc Drafting | Stage 2 Step 1 (`#<SK3-ISSUE>`) | Stage 2 (PR `#<SK3-PR>`) | `scripts/validate_skills.py`, `docs/test-results.md` (Planned) | `.agents/skills/brain-query/SKILL.md` | [[mcp-architecture]], [[srs-requirements-index]] |
-| **`SK-4`** Local Build, Test, Boot & Read-Only Health Check | Planned (Issue `#<M0-LC>`) | Planned | `scripts/validate_skills.py`, `scripts/run_local_check.py` (Planned) | `.agents/skills/local-check/SKILL.md` | [[fastmcp-python-sdk]], [[sqlite-wal-mode]] |
+| **`SK-4`** Local Build, Test, Boot & Read-Only Health Check | `#28` | Planned | `scripts/validate_skills.py`, `scripts/run_local_check.py`, `tests/test_run_local_check.py`, `tests/test_health.py` | `.agents/skills/local-check/SKILL.md` | [[fastmcp-python-sdk]], [[sqlite-wal-mode]] |
 | **`SK-5`** End-to-End Video-to-Playlist Curation Workflow | Planned (Issue `#<M5-SEC>`) | Planned | `scripts/validate_skills.py`, `tests/test_mcp_e2e.py` (Planned) | `.agents/skills/video-to-playlist/SKILL.md` | [[iso-8601-duration-parsing-and-playlist-constraint-packing]], [[prompt-injection-defense-for-untrusted-youtube-metadata]] |
 
 ---
