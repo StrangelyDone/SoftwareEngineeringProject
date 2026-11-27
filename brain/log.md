@@ -35,3 +35,4 @@ type: log
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-2-fixture-mock-provider]] | @sanjus09 |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-1-provider-contract]] | @sanjus09 |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-3-live-youtube-provider]] | @sanjus09 |
+| 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-4-provider-contract-tests]] | @sanjus09 |
