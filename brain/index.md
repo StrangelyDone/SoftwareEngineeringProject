@@ -25,6 +25,7 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 
 ## Inbox
 - [[ai-session-2026-11-26]] — Stage 2 AI session log covering ADRs `001`–`006`, `TBD-01`..`TBD-03`, and `SB-3` CI validation for Issue #20.
+- [[ai-session-2026-11-27-m0-server-skeleton]] — Stage 2 AI session log for Milestone `M0.2` server skeleton, SQLite WAL, and `YouTubeProvider` boundary (Issue `#26`, PR `#33`).
 
 ## Active Notes (Add links here as PRs merge)
 - [[youtube-api-quota-system]]
