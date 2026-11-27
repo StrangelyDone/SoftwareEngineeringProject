@@ -73,6 +73,8 @@ def create_app(
     """Create the FastAPI ASGI application hosting HTTP health/OpenAPI and FastMCP."""
     resolved_settings = settings or load_settings()
     resolved_provider = provider or FixtureMockProvider()
+    app_mcp = FastMCP(SERVICE_NAME)
+    app_mcp.settings.streamable_http_path = "/"
 
     @asynccontextmanager
     async def lifespan(fastapi_app: FastAPI) -> AsyncIterator[None]:
@@ -84,7 +86,7 @@ def create_app(
         )
         fastapi_app.state.settings = resolved_settings
         fastapi_app.state.provider = resolved_provider
-        async with mcp.session_manager.run():
+        async with app_mcp.session_manager.run():
             yield
 
     fastapi_app = FastAPI(
@@ -144,8 +146,7 @@ def create_app(
             return JSONResponse(status_code=503, content=payload.model_dump())
         return payload
 
-    mcp.settings.streamable_http_path = "/"
-    fastapi_app.mount("/mcp", mcp.streamable_http_app())
+    fastapi_app.mount("/mcp", app_mcp.streamable_http_app())
 
     return fastapi_app
 
