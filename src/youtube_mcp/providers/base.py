@@ -1,156 +1,43 @@
-"""Abstract YouTubeProvider interface, domain models, and exception hierarchy (`SE-6`, `ADR-003`).
-
-This module must never import `googleapiclient` or execute live network calls.
-"""
+"""Abstract YouTubeProvider interface (`SE-6`, `ADR-003`)."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from pydantic import BaseModel, Field
+from youtube_mcp.exceptions import (
+    ConfirmationRequiredError,
+    InvalidVideoIdentifierError,
+    OAuthReauthorizationRequiredError,
+    QuotaBudgetExceededError,
+    VideoUnavailableError,
+    YouTubeMCPError,
+    YouTubeSignupRequiredError,
+)
+from youtube_mcp.models import (
+    ChannelMetadata,
+    CreatedPlaylist,
+    PlaylistItemResult,
+    PlaylistSummary,
+    SearchPage,
+    VideoMetadata,
+)
 
-
-class YouTubeMCPError(Exception):
-    """Base domain exception mapped to structured MCP error payloads."""
-
-    error_code: str = "YOUTUBE_MCP_ERROR"
-    default_remediation: str = "Verify your request parameters and try again."
-
-    def __init__(self, message: str, remediation: str | None = None) -> None:
-        super().__init__(message)
-        self.message = message
-        self.remediation = remediation or self.default_remediation
-
-    def to_payload(self) -> dict[str, str]:
-        """Return a safe structured error payload without stack traces or secrets."""
-        return {
-            "error_code": self.error_code,
-            "message": self.message,
-            "remediation": self.remediation,
-        }
-
-
-class InvalidVideoIdentifierError(YouTubeMCPError):
-    """Raised when a video URL, channel URL, `@handle`, or ID fails validation (`TQ-4`)."""
-
-    error_code = "INVALID_IDENTIFIER"
-    default_remediation = (
-        "Provide a valid YouTube URL, 11-char video ID, @handle, or UC... channel ID."
-    )
-
-
-class VideoUnavailableError(YouTubeMCPError):
-    """Raised when a video or channel is private, deleted, or nonexistent (`TQ-4`)."""
-
-    error_code = "VIDEO_UNAVAILABLE"
-    default_remediation = (
-        "Verify the video is public/accessible and retry with another ID."
-    )
-
-
-class QuotaBudgetExceededError(YouTubeMCPError):
-    """Raised on TQ-6 pre-flight rejection or upstream `quotaExceeded`."""
-
-    error_code = "QUOTA_BUDGET_EXCEEDED"
-    default_remediation = (
-        "Wait for UTC midnight quota reset, reduce result scope, or rely on cached entries."
-    )
-
-
-class ConfirmationRequiredError(YouTubeMCPError):
-    """Raised when `FR-5` confirmation is missing, invalid, expired, or replayed."""
-
-    error_code = "CONFIRMATION_REQUIRED"
-    default_remediation = (
-        "Re-run propose_playlist and obtain explicit human confirmation before "
-        "calling confirm_playlist."
-    )
-
-
-class OAuthReauthorizationRequiredError(YouTubeMCPError):
-    """Raised when OAuth credentials are missing or the 7-day Testing token expired."""
-
-    error_code = "OAUTH_REAUTH_REQUIRED"
-    default_remediation = (
-        "Re-run the local OAuth 2.0 authorization flow to issue a fresh refresh token."
-    )
-
-
-class YouTubeSignupRequiredError(YouTubeMCPError):
-    """Raised when the authenticated Google account has no YouTube channel."""
-
-    error_code = "YOUTUBE_SIGNUP_REQUIRED"
-    default_remediation = (
-        "Create a YouTube channel on the authenticated Google account before creating playlists."
-    )
-
-
-class VideoMetadata(BaseModel):
-    """Normalized YouTube video metadata returned by `YouTubeProvider`."""
-
-    video_id: str
-    title: str
-    description: str = ""
-    channel_id: str = ""
-    channel_title: str = ""
-    tags: list[str] = Field(default_factory=list)
-    category_id: str | None = None
-    duration_iso8601: str | None = None
-    duration_seconds: int | None = None
-    default_language: str | None = None
-    default_audio_language: str | None = None
-    published_at: str | None = None
-    view_count: int | None = None
-    like_count: int | None = None
-
-
-class ChannelMetadata(BaseModel):
-    """Normalized YouTube channel metadata returned by `YouTubeProvider`."""
-
-    channel_id: str
-    title: str
-    description: str = ""
-    handle: str | None = None
-    topics: list[str] = Field(default_factory=list)
-    uploads_playlist_id: str | None = None
-    subscriber_count: int | None = None
-    video_count: int | None = None
-    country: str | None = None
-
-
-class SearchPage(BaseModel):
-    """Paginated `search.list` candidate video IDs."""
-
-    video_ids: list[str] = Field(default_factory=list)
-    next_page_token: str | None = None
-    total_results: int | None = None
-
-
-class PlaylistSummary(BaseModel):
-    """Summary of an existing playlist in the authorized user's library."""
-
-    playlist_id: str
-    title: str
-    description: str = ""
-    item_count: int = 0
-    privacy_status: str = "private"
-
-
-class CreatedPlaylist(BaseModel):
-    """Result of `playlists.insert`."""
-
-    playlist_id: str
-    title: str
-    privacy_status: str = "private"
-    playlist_url: str
-
-
-class PlaylistItemResult(BaseModel):
-    """Result of `playlistItems.insert`."""
-
-    playlist_id: str
-    video_id: str
-    playlist_item_id: str
+__all__ = [
+    "ChannelMetadata",
+    "ConfirmationRequiredError",
+    "CreatedPlaylist",
+    "InvalidVideoIdentifierError",
+    "OAuthReauthorizationRequiredError",
+    "PlaylistItemResult",
+    "PlaylistSummary",
+    "QuotaBudgetExceededError",
+    "SearchPage",
+    "VideoMetadata",
+    "VideoUnavailableError",
+    "YouTubeMCPError",
+    "YouTubeProvider",
+    "YouTubeSignupRequiredError",
+]
 
 
 class YouTubeProvider(ABC):

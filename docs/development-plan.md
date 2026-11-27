@@ -92,7 +92,7 @@ flowchart LR
 
 | Task ID | Deliverable / Scope | Requirements / ADRs | Owner | GitHub Issue | Target Date |
 |---|---|---|---|---|---|
-| `M2.1` | Define typed domain models (`VideoMetadata`, `ChannelMetadata`, `SearchPage`, `CreatedPlaylist`), custom exception hierarchy (`YouTubeMCPError` + 6 subclasses), and full `YouTubeProvider` ABC | `SE-6`, `NFR-QUAL-1`, `ADR-003` | `<Teammate B>` | `#<ID>` | 2026-12-02 |
+| `M2.1` | Define typed domain models (`VideoMetadata`, `ChannelMetadata`, `SearchPage`, `CreatedPlaylist`), custom exception hierarchy (`YouTubeMCPError` + 6 subclasses), and full `YouTubeProvider` ABC | `SE-6`, `NFR-QUAL-1`, `ADR-003` | `Pranay` | `#44` | 2026-12-02 |
 | `M2.2` | Build sanitized JSON fixture corpus in `tests/fixtures/` (zero PII/tokens: videos, channels, untagged videos, likes, subscriptions, playlists, error payloads) and full `FixtureMockProvider` with `inject_fault()` | `TQ-4`, `TQ-5`, `NFR-SEC-4`, `ADR-003` | `<Teammate A>` | `#<ID>` | 2026-12-03 |
 | `M2.3` | Implement `LiveYouTubeProvider` using official YouTube Data API v3 (`CON-1`), minimal OAuth scopes, `access_type=offline` refresh flow (handling 7-day Testing expiry → `OAuthReauthorizationRequiredError`), `youtubeSignupRequired` mapping, and bounded exponential backoff on HTTP 429/5xx | `CON-1`, `NFR-QUAL-2`, `NFR-SAFE-2`, `NFR-SEC-1`, `TQ-4`, `ADR-003` | `<Teammate B>` | `#<ID>` | 2026-12-05 |
 | `M2.4` | Write `tests/test_provider_contract.py` verifying mock/live schema parity, backoff retries (via mocked HTTP transport), and domain error mapping | `TQ-2`, `TQ-4`, `TQ-5` | `<Teammate A>` | `#<ID>` | 2026-12-05 |
