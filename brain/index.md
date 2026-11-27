@@ -25,6 +25,7 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[stage-1-review]] — Stage 1 retrospective and actions for Stage 2.
 - [[stage-2-review]] — Stage 2 architecture, design, and verification retrospective (`SB-2`)
 ## Inbox
+- [[ai-session-2026-11-27-m2-1-provider-contract]] — M2.1 typed provider models, exception hierarchy, and full provider ABC (Issue #44).
 - [[ai-session-2026-11-24]] — Stage 1 vault setup and project scoping.
 - [[ai-session-2026-11-26]] — Stage 2 AI session log covering ADRs `001`–`006`, `TBD-01`..`TBD-03`, and `SB-3` CI validation for Issue #20.
 - [[ai-session-2026-11-27-m0-server-skeleton]] — Stage 2 AI session log for Milestone `M0.2` server skeleton, SQLite WAL, and `YouTubeProvider` boundary (Issue `#26`, PR `#33`).

@@ -1,21 +1,23 @@
 """External YouTube Data API v3 provider interfaces and adapters (`SE-6`, `ADR-003`)."""
 
-from youtube_mcp.providers.base import (
-    ChannelMetadata,
+from youtube_mcp.exceptions import (
     ConfirmationRequiredError,
-    CreatedPlaylist,
     InvalidVideoIdentifierError,
     OAuthReauthorizationRequiredError,
-    PlaylistItemResult,
-    PlaylistSummary,
     QuotaBudgetExceededError,
-    SearchPage,
-    VideoMetadata,
     VideoUnavailableError,
     YouTubeMCPError,
-    YouTubeProvider,
     YouTubeSignupRequiredError,
 )
+from youtube_mcp.models import (
+    ChannelMetadata,
+    CreatedPlaylist,
+    PlaylistItemResult,
+    PlaylistSummary,
+    SearchPage,
+    VideoMetadata,
+)
+from youtube_mcp.providers.base import YouTubeProvider
 from youtube_mcp.providers.mock import FixtureMockProvider
 
 __all__ = [

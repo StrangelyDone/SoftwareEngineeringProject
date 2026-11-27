@@ -9,19 +9,23 @@ import json
 from pathlib import Path
 from typing import Any
 
-from youtube_mcp.providers.base import (
-    ChannelMetadata,
-    CreatedPlaylist,
+from youtube_mcp.exceptions import (
     InvalidVideoIdentifierError,
     OAuthReauthorizationRequiredError,
+    QuotaBudgetExceededError,
+    VideoUnavailableError,
+    YouTubeSignupRequiredError,
+)
+from youtube_mcp.models import (
+    ChannelMetadata,
+    CreatedPlaylist,
     PlaylistItemResult,
     PlaylistSummary,
-    QuotaBudgetExceededError,
     SearchPage,
     VideoMetadata,
-    VideoUnavailableError,
+)
+from youtube_mcp.providers.base import (
     YouTubeProvider,
-    YouTubeSignupRequiredError,
 )
 
 _FAULT_MAP: dict[str, type[Exception]] = {
