@@ -1,0 +1,66 @@
+{
+  "liked_video_ids": [
+    "vidDS000001",
+    "vidPY000002",
+    "vidSQL00003",
+    "vidPY000012"
+  ],
+  "subscribed_channel_ids": [
+    "UCsynthetic001",
+    "UCsynthetic002",
+    "UCsynthetic003"
+  ],
+  "playlists": [
+    {
+      "playlist_id": "PLsynthetic001",
+      "title": "Offline Engineering",
+      "description": "Synthetic software engineering playlist.",
+      "item_count": 4,
+      "privacy_status": "private"
+    },
+    {
+      "playlist_id": "PLsynthetic002",
+      "title": "Offline Learning",
+      "description": "Synthetic language and database learning playlist.",
+      "item_count": 3,
+      "privacy_status": "private"
+    }
+  ],
+  "playlist_items": {
+    "PLsynthetic001": [
+      "vidDS000001",
+      "vidPY000002",
+      "vidSQL00003",
+      "vidPY000012"
+    ],
+    "PLsynthetic002": [
+      "vidES000004",
+      "vidDE000005",
+      "vidTAG000008"
+    ],
+    "UUsynthetic001": [
+      "vidDS000001",
+      "vidES000004",
+      "vidDS000013"
+    ],
+    "UUsynthetic002": [
+      "vidPY000002",
+      "vidDE000005",
+      "vidTAG000009",
+      "vidPY000012"
+    ],
+    "UUsynthetic003": [
+      "vidSQL00003",
+      "vidTAG000008",
+      "vidBADUR011"
+    ],
+    "UUsynthetic004": [
+      "vidCOOK0006",
+      "vidSPARSE010"
+    ],
+    "UUsynthetic005": [
+      "vidMUSIC007",
+      "vidMUSIC014"
+    ]
+  }
+}

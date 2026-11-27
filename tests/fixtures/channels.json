@@ -1,0 +1,62 @@
+[
+  {
+    "channel_id": "UCsynthetic001",
+    "title": "Systems Lab",
+    "description": "Synthetic lessons on distributed systems and reliability.",
+    "handle": "@systems-lab",
+    "keywords": ["distributed systems", "reliability"],
+    "topic_categories": ["Technology", "Science"],
+    "uploads_playlist_id": "UUsynthetic001",
+    "subscriber_count": 125000,
+    "video_count": 48,
+    "country": "US"
+  },
+  {
+    "channel_id": "UCsynthetic002",
+    "title": "Python Studio",
+    "description": "Synthetic tutorials for Python and asyncio.",
+    "handle": "@python-studio",
+    "keywords": ["python", "asyncio", "software"],
+    "topic_categories": ["Technology", "Software"],
+    "uploads_playlist_id": "UUsynthetic002",
+    "subscriber_count": 86000,
+    "video_count": 72,
+    "country": "DE"
+  },
+  {
+    "channel_id": "UCsynthetic003",
+    "title": "Database Desk",
+    "description": "Synthetic database storage and internals demonstrations.",
+    "handle": "@database-desk",
+    "keywords": ["sqlite", "databases", "storage"],
+    "topic_categories": ["Technology", "Computing"],
+    "uploads_playlist_id": "UUsynthetic003",
+    "subscriber_count": 54000,
+    "video_count": 35,
+    "country": "GB"
+  },
+  {
+    "channel_id": "UCsynthetic004",
+    "title": "Test Kitchen",
+    "description": "Synthetic recipes and cooking experiments.",
+    "handle": "@test-kitchen",
+    "keywords": ["cooking", "recipes", "food"],
+    "topic_categories": ["Lifestyle", "Food"],
+    "uploads_playlist_id": "UUsynthetic004",
+    "subscriber_count": 23000,
+    "video_count": 21,
+    "country": "ES"
+  },
+  {
+    "channel_id": "UCsynthetic005",
+    "title": "Demo Sound",
+    "description": "Synthetic music and sound demonstrations.",
+    "handle": "@demo-sound",
+    "keywords": ["music", "instrumental", "guitar"],
+    "topic_categories": ["Music", "Arts"],
+    "uploads_playlist_id": "UUsynthetic005",
+    "subscriber_count": 41000,
+    "video_count": 29,
+    "country": "MX"
+  }
+]
