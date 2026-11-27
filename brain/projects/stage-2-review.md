@@ -2,7 +2,7 @@
 title: "Stage 2 Architecture & Design Review"
 type: review
 author: "Abhinav"
-date: "2026-11-27"
+created: "2026-11-27"
 tags:
   - stage-2
   - review
