@@ -1,0 +1,38 @@
+{
+  "quotaExceeded": {
+    "error": {
+      "code": 403,
+      "message": "The request cannot be completed because the synthetic quota is exhausted.",
+      "status": "quotaExceeded",
+      "reason": "quotaExceeded"
+    }
+  },
+  "youtubeSignupRequired": {
+    "error": {
+      "code": 401,
+      "message": "A YouTube channel is required for this synthetic account.",
+      "status": "youtubeSignupRequired",
+      "reason": "youtubeSignupRequired"
+    }
+  },
+  "videoNotFound": {
+    "error": {
+      "code": 404,
+      "message": "The synthetic video could not be found.",
+      "status": "videoNotFound",
+      "reason": "videoNotFound"
+    }
+  },
+  "invalid_grant": {
+    "error": "invalid_grant",
+    "error_description": "The synthetic OAuth refresh token is no longer valid."
+  },
+  "rateLimitExceeded": {
+    "error": {
+      "code": 429,
+      "message": "The synthetic request was rate limited.",
+      "status": "rateLimitExceeded",
+      "reason": "rateLimitExceeded"
+    }
+  }
+}
