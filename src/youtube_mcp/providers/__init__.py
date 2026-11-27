@@ -18,6 +18,7 @@ from youtube_mcp.models import (
     VideoMetadata,
 )
 from youtube_mcp.providers.base import YouTubeProvider
+from youtube_mcp.providers.live import LiveYouTubeProvider
 from youtube_mcp.providers.mock import FixtureMockProvider
 
 __all__ = [
@@ -26,6 +27,7 @@ __all__ = [
     "CreatedPlaylist",
     "FixtureMockProvider",
     "InvalidVideoIdentifierError",
+    "LiveYouTubeProvider",
     "OAuthReauthorizationRequiredError",
     "PlaylistItemResult",
     "PlaylistSummary",

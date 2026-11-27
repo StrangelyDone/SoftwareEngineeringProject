@@ -34,3 +34,4 @@ type: log
 | 2026-11-27 | Abhinav | Stage 2 Review | Created `brain/projects/stage-2-review.md`, linked in `brain/index.md`, finalized Stage 2 traceability & changelog (`M0.6`, `SB-2`) |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-2-fixture-mock-provider]] | @sanjus09 |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-1-provider-contract]] | @sanjus09 |
+| 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-3-live-youtube-provider]] | @sanjus09 |
