@@ -25,6 +25,7 @@ Master table of contents and `[[wikilink]]` hub for team research, standards, an
 - [[stage-1-review]] — Stage 1 retrospective and actions for Stage 2.
 - [[stage-2-review]] — Stage 2 architecture, design, and verification retrospective (`SB-2`)
 ## Inbox
+- [[ai-session-2026-11-28-m3-domain-services]] — Milestone 3 core domain services implementation (`M3.1`–`M3.5`, Issues `#55`, `#56`, PRs `#57`, `#60`).
 - [[ai-session-2026-11-27-m2-4-provider-contract-tests]] — M2.4 mock/live contract, backoff, OAuth, and provider-isolation tests (Issue #49).
 - [[ai-session-2026-11-27-m2-3-live-youtube-provider]] — M2.3 live YouTube provider, OAuth refresh, and bounded backoff (Issue #46).
 - [[ai-session-2026-11-27-m2-2-fixture-mock-provider]] — M2.2 sanitized fixtures and full offline mock provider (Issue #45).
