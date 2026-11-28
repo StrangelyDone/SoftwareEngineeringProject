@@ -121,11 +121,11 @@ flowchart LR
 **Goal:** Wire all 6 MCP tools into `src/youtube_mcp/server.py`, enforce strict JSON Schema Draft 2020-12 I/O and safe `ToolError` mapping, and verify end-to-end flows over MCP.  
 **Dependencies:** `M1`, `M2`, `M3`.
 
-| Task ID | Deliverable / Scope | Requirements / ADRs | Owner | GitHub Issue | Target Date |
-|---|---|---|---|---|---|
-| `M4.1` | Register `@mcp.tool()` handlers in `server.py` for `find_similar_videos`, `find_similar_channels`, `get_recommendations`, `analyze_user_engagement`, `propose_playlist`, `confirm_playlist` with Pydantic models and `stderr`-only logging | `FR-1`–`5`, `NFR-QUAL-4`, `ADR-001` | `<Teammate B>` | `#<ID>` | 2026-12-10 |
-| `M4.2` | Map all 6 `YouTubeMCPError` subclasses to structured `CallToolResult(isError=True)` payloads (`error_code`, `message`, `remediation`—zero stack traces or secrets) | `ADR-001`, `ADR-003`, `NFR-SEC-1` | `<Teammate B>` | `#<ID>` | 2026-12-10 |
-| `M4.3` | Write `TQ-2` integration tests (`tests/test_service_integration.py`) and `TQ-3` E2E MCP protocol tests (`tests/test_mcp_e2e.py`) exercising all 6 tools via `FixtureMockProvider` | `TQ-2`, `TQ-3`, `TQ-5` | `Abhinav` | `#<ID>` | 2026-12-11 |
+| Task ID | Deliverable / Scope                                                                                                                                                                                                                        | Requirements / ADRs                 | Owner     | GitHub Issue | Target Date |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- | --------- | ------------ | ----------- |
+| `M4.1`  | Register `@mcp.tool()` handlers in `server.py` for `find_similar_videos`, `find_similar_channels`, `get_recommendations`, `analyze_user_engagement`, `propose_playlist`, `confirm_playlist` with Pydantic models and `stderr`-only logging | `FR-1`–`5`, `NFR-QUAL-4`, `ADR-001` | `Abhinav` | `#62`        | 2026-12-10  |
+| `M4.2`  | Map all 6 `YouTubeMCPError` subclasses to structured `CallToolResult(isError=True)` payloads (`error_code`, `message`, `remediation`—zero stack traces or secrets)                                                                         | `ADR-001`, `ADR-003`, `NFR-SEC-1`   | `Abhinav` | `#63`        | 2026-12-10  |
+| `M4.3`  | Write `TQ-2` integration tests (`tests/test_service_integration.py`) and `TQ-3` E2E MCP protocol tests (`tests/test_mcp_e2e.py`) exercising all 6 tools via `FixtureMockProvider`                                                          | `TQ-2`, `TQ-3`, `TQ-5`              | `Abhinav` | `#64`        | 2026-12-11  |
 
 **Exit Criteria:** Every functional requirement (`FR-1`–`FR-5`) passes end-to-end through the FastMCP protocol layer against offline fixtures.
 
