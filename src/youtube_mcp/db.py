@@ -139,9 +139,10 @@ def get_remaining_quota(
 def check_wal_health(
     daily_quota_budget: int = DEFAULT_DAILY_QUOTA_BUDGET,
     db_path: Path | str | None = None,
+    date_utc: str | None = None,
 ) -> dict[str, Any]:
     """Perform a read-only WAL mode check and remaining quota query for health checks."""
-    target_date = utc_today_str()
+    target_date = date_utc or utc_today_str()
     with closing(get_connection(db_path)) as conn:
         mode_row = conn.execute("PRAGMA journal_mode;").fetchone()
         journal_mode = str(mode_row[0]).lower() if mode_row is not None else "unknown"
@@ -174,9 +175,13 @@ class SQLiteRepository:
         return get_used_quota(db_path=self.db_path, date_utc=date_utc)
 
     def check_wal_health(
-        self, daily_quota_budget: int = DEFAULT_DAILY_QUOTA_BUDGET
+        self,
+        daily_quota_budget: int = DEFAULT_DAILY_QUOTA_BUDGET,
+        date_utc: str | None = None,
     ) -> dict[str, Any]:
         """Return active SQLite WAL status and remaining daily quota."""
         return check_wal_health(
-            daily_quota_budget=daily_quota_budget, db_path=self.db_path
+            daily_quota_budget=daily_quota_budget,
+            db_path=self.db_path,
+            date_utc=date_utc,
         )

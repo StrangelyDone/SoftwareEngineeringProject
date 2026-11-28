@@ -13,6 +13,7 @@ from youtube_mcp.db import (
     get_remaining_quota,
     get_used_quota,
     init_db,
+    utc_today_str,
 )
 
 TABLE_NAMES = {
@@ -127,6 +128,7 @@ def test_quota_queries_filter_by_utc_date(tmp_path: Path) -> None:
 def test_quota_queries_never_return_negative_remaining_quota(tmp_path: Path) -> None:
     db_path = tmp_path / "over_quota.db"
     init_db(db_path)
+    today_utc = utc_today_str()
 
     with closing(get_connection(db_path)) as conn, conn:
         conn.execute(
@@ -135,10 +137,10 @@ def test_quota_queries_never_return_negative_remaining_quota(tmp_path: Path) -> 
                 (date_utc, endpoint, units_cost, workflow_context, created_at)
             VALUES (?, ?, ?, ?, ?)
             """,
-            ("2026-11-27", "search.list", 12000, "test", "2026-11-27T00:00:00Z"),
+            (today_utc, "search.list", 12000, "test", f"{today_utc}T00:00:00Z"),
         )
 
-    assert get_remaining_quota(10000, db_path, "2026-11-27") == 0
+    assert get_remaining_quota(10000, db_path, today_utc) == 0
     health = check_wal_health(10000, db_path)
     assert health == {
         "journal_mode": "wal",
