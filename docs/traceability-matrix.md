@@ -47,7 +47,7 @@
 | **`TQ-5`** Offline Fixture-Based CI (Zero Live YouTube Calls on PRs) | `#20`, `#26`, `#27`, `#38`, `#41`, `#44`, `#45`, `#46`, `#49` | PR `#<ADR-PR>`, Stage 1 CI PR `#<CI-PR>`, PR `#33`, PR `#<M1.3-PR>` | `.github/workflows/ci.yml`, `tests/test_smoke.py`, `tests/test_db_wal.py`, `tests/test_health.py`, `tests/test_repository.py`, `tests/test_quota_guard.py`, `tests/test_provider_models_and_exceptions.py`, `tests/test_fixture_mock_provider.py`, `tests/test_live_provider.py`, `tests/test_provider_contract.py`, `tests/fixtures/*.json` | `local-check` (`SK-4`) | [[provider-pattern-isolation]], [[youtube-api-quota-system]] |
 | **`TQ-6`** Pre-Flight Quota Guard (Reject Before API Call) | `#20`, `#22`, `#38`, `#40`, `#41` | PR `#<ADR-PR>`, PR `#<ARCH-PR>`, PR `#<M1.2-PR>`, PR `#<M1.3-PR>` | `tests/test_quota_guard.py` | `local-check` (`SK-4`) | [[youtube-api-quota-system]], [[sqlite-wal-mode]] |
 | **`TQ-7`** Pre-Submission Agent Skill Evaluations | Planned (Issue `#<M0-EVAL>`, `#<M5-SEC>`) | Planned | `scripts/validate_skills.py`, Planned: `docs/test-results.md` | `brain-ingest`, `brain-refine`, `brain-query`, `local-check`, `video-to-playlist` | [[srs-requirements-index]] |
-| **`TQ-8`** Regression Tests for Every Fixed Defect | Ongoing (linked per bug issue) | Ongoing | Planned: `tests/test_regressions.py` | `local-check` (`SK-4`) | [[srs-requirements-index]] |
+| **`TQ-8`** Regression Tests for Every Fixed Defect | `#58` (linked per bug issue) | Ongoing | `tests/test_regressions.py` | `local-check` (`SK-4`) | [[srs-requirements-index]] |
 
 ---
 
