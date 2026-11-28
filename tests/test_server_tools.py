@@ -51,17 +51,16 @@ def test_confirm_playlist_schema_requires_explicit_true_and_token(
         tool.inputSchema for tool in tools if tool.name == "confirm_playlist"
     )
 
-    assert {"confirmation_token", "user_confirmed", "playlist_title"} <= set(
+    assert {"confirmation_token", "playlist_title"} <= set(
         confirm_schema["required"]
     )
+    assert confirm_schema["properties"]["user_confirmed"]["default"] is False
     validator = Draft202012Validator(confirm_schema)
     request = {
         "confirmation_token": "fixture-token",
         "user_confirmed": False,
         "playlist_title": "Requested playlist",
     }
-    assert list(validator.iter_errors(request))
-    request["user_confirmed"] = True
     assert not list(validator.iter_errors(request))
 
 

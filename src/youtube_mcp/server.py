@@ -6,22 +6,25 @@ framing on `stdout` is never corrupted.
 
 from __future__ import annotations
 
+import json
 import logging
 import sqlite3
 import sys
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from mcp.server.fastmcp import FastMCP
+from mcp.types import CallToolResult, TextContent
 from pydantic import BaseModel, ConfigDict, Field
 
 from youtube_mcp import __version__
 from youtube_mcp.config import Settings, load_settings
 from youtube_mcp.db import check_wal_health
+from youtube_mcp.exceptions import ConfirmationRequiredError, YouTubeMCPError
 from youtube_mcp.providers.base import YouTubeProvider
 from youtube_mcp.providers.live import LiveYouTubeProvider
 from youtube_mcp.providers.mock import FixtureMockProvider
@@ -71,6 +74,16 @@ class _ToolInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class ToolErrorPayload(BaseModel):
+    """Safe error shape exposed to MCP clients."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    error_code: str
+    message: str
+    remediation: str
+
+
 class SimilarVideosInput(_ToolInput):
     video_ref: str = Field(min_length=1, max_length=2048)
     limit: int = Field(default=10, ge=1, le=25)
@@ -100,7 +113,7 @@ class ProposePlaylistInput(_ToolInput):
 
 class ConfirmPlaylistInput(_ToolInput):
     confirmation_token: str = Field(min_length=1, max_length=256)
-    user_confirmed: Literal[True]
+    user_confirmed: bool = False
     playlist_title: str = Field(min_length=1, max_length=150)
     playlist_description: str = Field(default="", max_length=5000)
     privacy_status: Literal["private", "unlisted", "public"] = "private"
@@ -118,6 +131,37 @@ ConfirmationToken = Annotated[str, Field(min_length=1, max_length=256)]
 PlaylistTitle = Annotated[str, Field(min_length=1, max_length=150)]
 PlaylistDescription = Annotated[str, Field(max_length=5000)]
 LanguageCode = Annotated[str, Field(pattern=r"^[A-Za-z]{2}$")]
+
+
+def _tool_error_result(payload: dict[str, str]) -> CallToolResult:
+    """Create an MCP error result while preserving FastMCP's typed output validation."""
+    return CallToolResult(
+        isError=True,
+        content=[
+            TextContent(
+                type="text",
+                text=json.dumps(payload, ensure_ascii=False),
+            )
+        ],
+        structuredContent={"result": payload},
+    )
+
+
+def _map_tool_errors(tool_name: str, operation: Callable[[], Any]) -> Any:
+    """Return safe structured MCP errors for domain and unexpected tool failures."""
+    try:
+        return operation()
+    except YouTubeMCPError as exc:
+        return _tool_error_result(exc.to_error_payload())
+    except Exception:
+        logger.exception("Unexpected error while executing MCP tool %s", tool_name)
+        return _tool_error_result(
+            {
+                "error_code": "INTERNAL_ERROR",
+                "message": "An unexpected error occurred while processing the request.",
+                "remediation": "Check the request and try again. Contact support if the issue persists.",
+            }
+        )
 
 
 @dataclass(frozen=True)
@@ -225,51 +269,63 @@ def _register_tools(server: FastMCP, services: ServerDependencies) -> None:
     def find_similar_videos(
         video_ref: VideoRef,
         limit: VideoLimit = 10,
-    ) -> SimilarVideosResponse:
+    ) -> SimilarVideosResponse | ToolErrorPayload:
         """Find ranked videos similar to a YouTube video URL or ID (`FR-1`)."""
-        args = SimilarVideosInput.model_validate(
-            {"video_ref": video_ref, "limit": limit}
-        )
-        return services.similarity.find_similar_videos(args.video_ref, args.limit)
+        def execute() -> SimilarVideosResponse:
+            args = SimilarVideosInput.model_validate(
+                {"video_ref": video_ref, "limit": limit}
+            )
+            return services.similarity.find_similar_videos(args.video_ref, args.limit)
+
+        return _map_tool_errors("find_similar_videos", execute)
 
     @server.tool()
     def find_similar_channels(
         channel_ref: ChannelRef,
         limit: ChannelLimit = 10,
-    ) -> SimilarChannelsResponse:
+    ) -> SimilarChannelsResponse | ToolErrorPayload:
         """Find ranked channels similar to a YouTube channel URL, handle, or ID (`FR-2`)."""
-        args = SimilarChannelsInput.model_validate(
-            {"channel_ref": channel_ref, "limit": limit}
-        )
-        return services.similarity.find_similar_channels(args.channel_ref, args.limit)
+        def execute() -> SimilarChannelsResponse:
+            args = SimilarChannelsInput.model_validate(
+                {"channel_ref": channel_ref, "limit": limit}
+            )
+            return services.similarity.find_similar_channels(args.channel_ref, args.limit)
+
+        return _map_tool_errors("find_similar_channels", execute)
 
     @server.tool()
     def get_recommendations(
         limit: VideoLimit = 10,
         exclude_known_videos: Literal[True] = True,
-    ) -> RecommendationsResponse:
+    ) -> RecommendationsResponse | ToolErrorPayload:
         """Recommend unseen videos from the authorized user's library (`FR-3`)."""
-        args = RecommendationsInput.model_validate(
-            {"limit": limit, "exclude_known_videos": exclude_known_videos}
-        )
-        return services.recommendations.recommend_for_user(args.limit)
+        def execute() -> RecommendationsResponse:
+            args = RecommendationsInput.model_validate(
+                {"limit": limit, "exclude_known_videos": exclude_known_videos}
+            )
+            return services.recommendations.recommend_for_user(args.limit)
+
+        return _map_tool_errors("get_recommendations", execute)
 
     @server.tool()
     def analyze_user_engagement(
         period_days: PeriodDays = 30,
         compare_previous_period: bool = True,
-    ) -> EngagementReport:
+    ) -> EngagementReport | ToolErrorPayload:
         """Analyze library engagement, duration preferences, and trends (`FR-4`)."""
-        args = EngagementInput.model_validate(
-            {
-                "period_days": period_days,
-                "compare_previous_period": compare_previous_period,
-            }
-        )
-        return services.analytics.analyze_engagement(
-            period_days=args.period_days,
-            compare_previous=args.compare_previous_period,
-        )
+        def execute() -> EngagementReport:
+            args = EngagementInput.model_validate(
+                {
+                    "period_days": period_days,
+                    "compare_previous_period": compare_previous_period,
+                }
+            )
+            return services.analytics.analyze_engagement(
+                period_days=args.period_days,
+                compare_previous=args.compare_previous_period,
+            )
+
+        return _map_tool_errors("analyze_user_engagement", execute)
 
     @server.tool()
     def propose_playlist(
@@ -277,44 +333,54 @@ def _register_tools(server: FastMCP, services: ServerDependencies) -> None:
         max_total_duration_minutes: PlaylistTotalMinutes,
         max_video_duration_minutes: PlaylistVideoMinutes | None = None,
         language: LanguageCode | None = None,
-    ) -> PlaylistProposalResponse:
+    ) -> PlaylistProposalResponse | ToolErrorPayload:
         """Propose a constrained playlist without writing to YouTube (`FR-5`, Phase 1)."""
-        args = ProposePlaylistInput.model_validate(
-            {
-                "topic": topic,
-                "max_total_duration_minutes": max_total_duration_minutes,
-                "max_video_duration_minutes": max_video_duration_minutes,
-                "language": language,
-            }
-        )
-        request = PlaylistProposalRequest.model_validate(args.model_dump())
-        return services.playlists.propose_playlist(request)
+        def execute() -> PlaylistProposalResponse:
+            args = ProposePlaylistInput.model_validate(
+                {
+                    "topic": topic,
+                    "max_total_duration_minutes": max_total_duration_minutes,
+                    "max_video_duration_minutes": max_video_duration_minutes,
+                    "language": language,
+                }
+            )
+            request = PlaylistProposalRequest.model_validate(args.model_dump())
+            return services.playlists.propose_playlist(request)
+
+        return _map_tool_errors("propose_playlist", execute)
 
     @server.tool()
     def confirm_playlist(
         confirmation_token: ConfirmationToken,
-        user_confirmed: Literal[True],
         playlist_title: PlaylistTitle,
+        user_confirmed: bool = False,
         playlist_description: PlaylistDescription = "",
         privacy_status: Literal["private", "unlisted", "public"] = "private",
-    ) -> PlaylistCreatedResponse:
+    ) -> PlaylistCreatedResponse | ToolErrorPayload:
         """Create a proposed playlist only after explicit user confirmation (`FR-5`, Phase 2)."""
-        args = ConfirmPlaylistInput.model_validate(
-            {
-                "confirmation_token": confirmation_token,
-                "user_confirmed": user_confirmed,
-                "playlist_title": playlist_title,
-                "playlist_description": playlist_description,
-                "privacy_status": privacy_status,
-            }
-        )
-        return services.playlists.confirm_playlist(
-            confirmation_token=args.confirmation_token,
-            user_confirmed=args.user_confirmed,
-            playlist_title=args.playlist_title,
-            playlist_description=args.playlist_description,
-            privacy_status=args.privacy_status,
-        )
+        def execute() -> PlaylistCreatedResponse:
+            if user_confirmed is not True:
+                raise ConfirmationRequiredError(
+                    "Explicit user_confirmed=True is required before creating a YouTube playlist."
+                )
+            args = ConfirmPlaylistInput.model_validate(
+                {
+                    "confirmation_token": confirmation_token,
+                    "user_confirmed": user_confirmed,
+                    "playlist_title": playlist_title,
+                    "playlist_description": playlist_description,
+                    "privacy_status": privacy_status,
+                }
+            )
+            return services.playlists.confirm_playlist(
+                confirmation_token=args.confirmation_token,
+                user_confirmed=args.user_confirmed,
+                playlist_title=args.playlist_title,
+                playlist_description=args.playlist_description,
+                privacy_status=args.privacy_status,
+            )
+
+        return _map_tool_errors("confirm_playlist", execute)
 
 
 def _create_fastapi_app(services: ServerDependencies) -> FastAPI:
