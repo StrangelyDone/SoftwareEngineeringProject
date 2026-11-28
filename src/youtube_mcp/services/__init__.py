@@ -1,5 +1,36 @@
 """Core domain services for YouTube MCP (`SE-6`: zero external HTTP/API imports)."""
 
+from youtube_mcp.services.analytics import (
+    AnalyticsService,
+    CategoryDistributionEntry,
+    ChannelDistributionEntry,
+    DurationBuckets,
+    DurationPreferences,
+    EngagementReport,
+    KeyDelta,
+    PeriodComparison,
+    PeriodSummary,
+    TrendBucket,
+)
+from youtube_mcp.services.duration import (
+    parse_iso8601_duration,
+    resolve_video_duration_seconds,
+    try_parse_iso8601_duration,
+)
+from youtube_mcp.services.playlist import (
+    PlaylistCreatedResponse,
+    PlaylistProposalRequest,
+    PlaylistProposalResponse,
+    PlaylistService,
+    ProposedVideoItem,
+)
+from youtube_mcp.services.recommendation import (
+    ProfileSummary,
+    RecommendationItem,
+    RecommendationService,
+    RecommendationsResponse,
+    UserInterestProfile,
+)
 from youtube_mcp.services.similarity import (
     DEFAULT_W_CATEGORY,
     DEFAULT_W_TAGS,
@@ -17,6 +48,24 @@ __all__ = [
     "DEFAULT_W_CATEGORY",
     "DEFAULT_W_TAGS",
     "DEFAULT_W_TFIDF",
+    "AnalyticsService",
+    "CategoryDistributionEntry",
+    "ChannelDistributionEntry",
+    "DurationBuckets",
+    "DurationPreferences",
+    "EngagementReport",
+    "KeyDelta",
+    "PeriodComparison",
+    "PeriodSummary",
+    "PlaylistCreatedResponse",
+    "PlaylistProposalRequest",
+    "PlaylistProposalResponse",
+    "PlaylistService",
+    "ProfileSummary",
+    "ProposedVideoItem",
+    "RecommendationItem",
+    "RecommendationService",
+    "RecommendationsResponse",
     "ScoreBreakdown",
     "SimilarChannelItem",
     "SimilarChannelsResponse",
@@ -24,4 +73,9 @@ __all__ = [
     "SimilarVideosResponse",
     "SimilarityScore",
     "SimilarityService",
+    "TrendBucket",
+    "UserInterestProfile",
+    "parse_iso8601_duration",
+    "resolve_video_duration_seconds",
+    "try_parse_iso8601_duration",
 ]
