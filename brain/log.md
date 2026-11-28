@@ -36,3 +36,4 @@ type: log
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-1-provider-contract]] | @sanjus09 |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-3-live-youtube-provider]] | @sanjus09 |
 | 2026-11-27 | Brain Ingest | Added [[ai-session-2026-11-27-m2-4-provider-contract-tests]] | @sanjus09 |
+| 2026-11-28 | AI Session Log | Added [[ai-session-2026-11-28-m3-domain-services]] documenting Milestone 3 domain services implementation | @StrangelyDone |
