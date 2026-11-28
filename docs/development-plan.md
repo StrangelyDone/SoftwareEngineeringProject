@@ -2,7 +2,7 @@
 
 **Project:** YouTube Video Intelligence MCP Server  
 **Current Stage:** Stage 2 (Architecture & Design) → Stage 3 (Implementation & Verification)  
-**Last Updated:** 2026-11-27  
+**Last Updated:** 2026-11-28  
 **Traceable Artifacts:** [docs/srs.pdf](srs.pdf) | [docs/architecture.md](architecture.md) | [docs/adr/README.md](adr/README.md) | [docs/traceability-matrix.md](traceability-matrix.md)
 
 ---
@@ -107,11 +107,11 @@ flowchart LR
 
 | Task ID | Deliverable / Scope | Requirements / ADRs | Owner | GitHub Issue | Target Date |
 |---|---|---|---|---|---|
-| `M3.1` | Implement `InputValidator` (11-char video ID/URL, `UC...` channel ID/`@handle`, ISO 639-1) and `MetadataSanitizer` (strip NUL/ANSI/bidi/control chars, bound lengths, tag `untrusted_metadata=True`) | `NFR-SEC-2`, `TQ-4`, `ADR-005` | `Abhinav` | `#<ID>` | 2026-12-06 |
-| `M3.2` | Implement `SimilarityService` (NFC normalization, $2\times$ title / $1\times$ description smoothed TF-IDF cosine, tag Jaccard, category match, weights $0.65 / 0.25 / 0.10$, missing-tag re-weighting $0.8667 / 0.1333$, channel aggregation, deterministic tie-breaking) | `FR-1`, `FR-2`, `NFR-PERF-2`, `TBD-02`, `ADR-004` | `Abhinav` | `#<ID>` | 2026-12-07 |
-| `M3.3` | Implement `RecommendationService` (`FR-3` user likes/subs/playlists profile) and `AnalyticsService` (`FR-4` top channels/categories, duration buckets, monthly trends, period comparison) | `FR-3`, `FR-4` | `Abhinav` | `#<ID>` | 2026-12-08 |
-| `M3.4` | Implement `PlaylistService` (strict ISO-8601 duration regex excluding malformed values, language & max-video filtering, bounded knapsack optimizer, Phase 1 draft persistence + Phase 2 atomic confirmation & `50 + 50N` quota gate) | `FR-5`, `NFR-SAFE-2`, `ADR-005`, `ADR-006` | `Abhinav` | `#<ID>` | 2026-12-09 |
-| `M3.5` | Write `TQ-1` unit tests (`test_similarity.py`, `test_duration_knapsack.py`, `test_analytics.py`, `test_sanitizer.py`) including `<500 ms` benchmark on 200 cached videos | `TQ-1`, `NFR-PERF-2` | `Abhinav` | `#<ID>` | 2026-12-09 |
+| `M3.1` | Implement `InputValidator` (11-char video ID/URL, `UC...` channel ID/`@handle`, ISO 639-1) and `MetadataSanitizer` (strip NUL/ANSI/bidi/control chars, bound lengths, tag `untrusted_metadata=True`) | `NFR-SEC-2`, `TQ-4`, `ADR-005` | `Raj Vardhan` | `#55` | 2026-12-06 |
+| `M3.2` | Implement `SimilarityService` (NFC normalization, $2\times$ title / $1\times$ description smoothed TF-IDF cosine, tag Jaccard, category match, weights $0.65 / 0.25 / 0.10$, missing-tag re-weighting $0.8667 / 0.1333$, channel aggregation, deterministic tie-breaking) | `FR-1`, `FR-2`, `NFR-PERF-2`, `TBD-02`, `ADR-004` | `Raj Vardhan` | `#55` | 2026-12-07 |
+| `M3.3` | Implement `RecommendationService` (`FR-3` user likes/subs/playlists profile) and `AnalyticsService` (`FR-4` top channels/categories, duration buckets, monthly trends, period comparison) | `FR-3`, `FR-4` | `Raj Vardhan` | `#<ID>` | 2026-12-08 |
+| `M3.4` | Implement `PlaylistService` (strict ISO-8601 duration regex excluding malformed values, language & max-video filtering, bounded knapsack optimizer, Phase 1 draft persistence + Phase 2 atomic confirmation & `50 + 50N` quota gate) | `FR-5`, `NFR-SAFE-2`, `ADR-005`, `ADR-006` | `Raj Vardhan` | `#<ID>` | 2026-12-09 |
+| `M3.5` | Write `TQ-1` unit tests (`test_similarity.py`, `test_duration_knapsack.py`, `test_analytics.py`, `test_sanitizer.py`) including `<500 ms` benchmark on 200 cached videos | `TQ-1`, `NFR-PERF-2` | `Raj Vardhan` | `#55`, `#<M3-REC>` | 2026-12-09 |
 
 **Exit Criteria:** 100% deterministic unit test pass on similarity weights, missing-tag fallback, ISO-8601 edge cases, and knapsack constraint adherence; 200-video ranking runs in `<500 ms`.
 
